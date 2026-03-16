@@ -13,6 +13,7 @@ import { useConfig } from '../../../providers/Config/index.js'
 import { useDocumentSelection } from '../../../providers/DocumentSelection/index.js'
 import { useHierarchy } from '../../../providers/Hierarchy/index.js'
 import { useRouteCache } from '../../../providers/RouteCache/index.js'
+import { useSidebarTabs } from '../../../providers/SidebarTabs/index.js'
 import { useTranslation } from '../../../providers/Translation/index.js'
 
 export type DocumentListSelectionProps = {
@@ -53,8 +54,9 @@ export const DocumentListSelection: React.FC<DocumentListSelectionProps> = ({
   hierarchySlug,
 }) => {
   const { clearAll, getSelectionsForActions, getTotalCount } = useDocumentSelection()
-  const { parent, refreshTree } = useHierarchy()
+  const { parent } = useHierarchy()
   const { clearRouteCache } = useRouteCache()
+  const sidebarTabs = useSidebarTabs()
   const { config } = useConfig()
   const { t } = useTranslation()
 
@@ -81,8 +83,10 @@ export const DocumentListSelection: React.FC<DocumentListSelectionProps> = ({
   }
 
   const handleActionSuccess = () => {
-    refreshTree()
-    clearRouteCache() // This already calls router.refresh()
+    clearRouteCache()
+    if (hierarchySlug) {
+      sidebarTabs?.reloadTabContent(`hierarchy-${hierarchySlug}`)
+    }
     clearAll()
   }
 

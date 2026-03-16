@@ -4,7 +4,7 @@ import type { SidebarTabClientProps } from 'payload'
 
 import { useRouter, useSearchParams } from 'next/navigation.js'
 import { formatAdminURL } from 'payload/shared'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
 import type { HierarchyInitialData } from './types.js'
 
@@ -56,11 +56,7 @@ export const HierarchySidebarTab: React.FC<
   const [selectedFilters, setSelectedFiltersLocal] = useState<string[]>(
     initialSelectedFilters ?? [],
   )
-  const {
-    setSelectedFilters: setSelectedFiltersContext,
-    treeRefreshKey,
-    viewCollectionSlug,
-  } = useHierarchy()
+  const { setSelectedFilters: setSelectedFiltersContext, viewCollectionSlug } = useHierarchy()
 
   // Only show selection if the current list view matches this tab's hierarchy collection
   const parentParam = searchParams.get('parent')
@@ -70,17 +66,6 @@ export const HierarchySidebarTab: React.FC<
     : undefined
 
   const baseFilterKey = baseFilter ? JSON.stringify(baseFilter) : ''
-
-  // Block the stale initialData snapshot captured at refresh time, but allow any newer
-  // initialData that arrives once router.refresh() completes (contains the fresh tree).
-  const initialDataAtRefreshRef = useRef(initialData)
-  const prevTreeRefreshKeyRef = useRef(treeRefreshKey)
-  if (prevTreeRefreshKeyRef.current !== treeRefreshKey) {
-    prevTreeRefreshKeyRef.current = treeRefreshKey
-    initialDataAtRefreshRef.current = initialData
-  }
-  const effectiveInitialData =
-    treeRefreshKey === 0 || initialData !== initialDataAtRefreshRef.current ? initialData : null
 
   const handleFilterChange = useCallback(
     (filters: string[]) => {
@@ -111,7 +96,7 @@ export const HierarchySidebarTab: React.FC<
         expandedNodes={initialExpandedNodes}
         parentFieldName={parentFieldName}
         selectedFilters={initialSelectedFilters}
-        treeData={effectiveInitialData}
+        treeData={initialData}
         treeLimit={treeLimit}
         typeFieldName={typeFieldName}
       />
@@ -131,9 +116,9 @@ export const HierarchySidebarTab: React.FC<
             collectionSlug={hierarchyCollectionSlug}
             filterByCollections={selectedFilters.length > 0 ? selectedFilters : undefined}
             icon={icon}
-            initialData={effectiveInitialData}
+            initialData={initialData}
             initialExpandedNodes={initialExpandedNodes}
-            key={`${hierarchyCollectionSlug}-${treeRefreshKey}-${baseFilterKey}`}
+            key={`${hierarchyCollectionSlug}-${baseFilterKey}`}
             onNodeClick={handleNavigateToParent}
             selectedNodeId={selectedNodeId}
             useAsTitle={useAsTitle}

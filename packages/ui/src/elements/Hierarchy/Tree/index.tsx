@@ -3,7 +3,7 @@
 import { getTranslation } from '@payloadcms/translations'
 import { useRouter } from 'next/navigation.js'
 import { DEFAULT_HIERARCHY_TREE_LIMIT } from 'payload/shared'
-import React, { useCallback, useEffect, useId, useMemo, useRef } from 'react'
+import React, { useCallback, useId, useMemo, useRef } from 'react'
 
 import type { CachedChildren, HierarchyTreeProps, TreeDocument } from './types.js'
 
@@ -194,7 +194,6 @@ const HierarchyTreeInner: React.FC<HierarchyTreeProps> = ({
     children: rootNodes,
     hasMore,
     isLoading,
-    load: loadRootNodes,
     loadMore: loadMoreFromHook,
     refresh,
     totalDocs,
@@ -212,14 +211,6 @@ const HierarchyTreeInner: React.FC<HierarchyTreeProps> = ({
     typeFieldName,
     useAsTitle,
   })
-
-  // Load root nodes on mount. Handles the case where initialData is unavailable (e.g. after
-  // refreshTree() clears server-provided data). load() is idempotent — no-ops if already loaded.
-  const loadRootNodesRef = useRef(loadRootNodes)
-  loadRootNodesRef.current = loadRootNodes
-  useEffect(() => {
-    void loadRootNodesRef.current()
-  }, [])
 
   const handleLoadMore = useCallback(async () => {
     await loadMoreFromHook()
