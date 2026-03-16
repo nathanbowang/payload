@@ -56,8 +56,8 @@ export type HierarchyContextValue = {
   /** The full data of the current parent (for accessing id, collectionSpecific values, etc.) */
   parent: null | (Record<string, unknown> & TypeWithID)
   parentFieldName: string
-  /** Refresh the tree by clearing cache and incrementing refreshKey to force remount */
-  refreshTree: () => void
+  /** Refresh the tree for a specific collection by clearing its cache and incrementing its key */
+  refreshTree: (collectionSlug: string) => void
   reset: () => void
   /** Selected collection type filters for the sidebar tree */
   selectedFilters: string[]
@@ -68,8 +68,8 @@ export type HierarchyContextValue = {
   /** Toggle node expansion for a specific collection (use this in tabs to avoid cross-tab state conflicts) */
   toggleNodeForCollection: (collectionSlug: string, id: number | string) => void
   treeLimit: number
-  /** Key that changes when tree should remount (incremented by refreshTree) */
-  treeRefreshKey: number
+  /** Per-collection keys that change when refreshTree(slug) is called */
+  treeRefreshKeys: Map<string, number>
   /** Field name for collection-specific restrictions (e.g., 'hierarchyType') */
   typeFieldName: null | string
   useAsTitle: null | string

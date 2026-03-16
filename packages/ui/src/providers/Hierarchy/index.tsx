@@ -51,7 +51,7 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
   >(() => new Map())
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
   const [loadingNodeId, setLoadingNodeId] = useState<null | number | string>(null)
-  const [treeRefreshKey, setTreeRefreshKey] = useState<number>(0)
+  const [treeRefreshKeys, setTreeRefreshKeys] = useState<Map<string, number>>(() => new Map())
 
   const getNodeChildren = useCallback(
     (parentId: null | number | string): HierarchyDocument[] => {
@@ -380,9 +380,17 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
     setLoadingNodeId(null)
   }, [])
 
-  const refreshTree = useCallback(() => {
-    setTreeCache(new Map())
-    setTreeRefreshKey((prev) => prev + 1)
+  const refreshTree = useCallback((slug: string) => {
+    setTreeCache((prev) => {
+      const next = new Map(prev)
+      next.delete(slug)
+      return next
+    })
+    setTreeRefreshKeys((prev) => {
+      const next = new Map(prev)
+      next.set(slug, (next.get(slug) ?? 0) + 1)
+      return next
+    })
   }, [])
 
   const expandedNodes =
@@ -417,7 +425,7 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
     toggleNode,
     toggleNodeForCollection,
     treeLimit,
-    treeRefreshKey,
+    treeRefreshKeys,
     typeFieldName,
     useAsTitle,
     viewCollectionSlug,

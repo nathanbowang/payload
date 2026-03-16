@@ -82,7 +82,9 @@ export const DocumentListSelection: React.FC<DocumentListSelectionProps> = ({
 
   const handleActionSuccess = () => {
     clearRouteCache()
-    refreshTree()
+    if (hierarchySlug) {
+      refreshTree(hierarchySlug)
+    }
     clearAll()
   }
 

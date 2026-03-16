@@ -50,7 +50,7 @@ export function HierarchyListHeader({
 
   const handleSave = () => {
     clearRouteCache()
-    refreshTree()
+    refreshTree(collectionConfig.slug)
   }
 
   return (
