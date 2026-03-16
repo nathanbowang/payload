@@ -4,13 +4,14 @@ import type { SidebarTabClientProps } from 'payload'
 
 import { useRouter, useSearchParams } from 'next/navigation.js'
 import { formatAdminURL } from 'payload/shared'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { HierarchyInitialData } from './types.js'
 
 import { useConfig } from '../../../providers/Config/index.js'
 import { useHierarchy } from '../../../providers/Hierarchy/index.js'
 import { useRouteTransition } from '../../../providers/RouteTransition/index.js'
+import { useSidebarTabs } from '../../../providers/SidebarTabs/index.js'
 import { HydrateHierarchyProvider } from '../HydrateProvider/index.js'
 import { HierarchySearch } from '../Search/index.js'
 import { HierarchyTree } from './index.js'
@@ -56,7 +57,23 @@ export const HierarchySidebarTab: React.FC<
   const [selectedFilters, setSelectedFiltersLocal] = useState<string[]>(
     initialSelectedFilters ?? [],
   )
-  const { setSelectedFilters: setSelectedFiltersContext, viewCollectionSlug } = useHierarchy()
+  const {
+    setSelectedFilters: setSelectedFiltersContext,
+    treeRefreshKey,
+    viewCollectionSlug,
+  } = useHierarchy()
+  const sidebarTabs = useSidebarTabs()
+
+  // When refreshTree() is called from the list view (e.g. after mutations), reload this tab.
+  // HierarchySidebarTab is rendered inside SidebarTabsProvider so it can call reloadTabContent,
+  // unlike HierarchyListHeader which is in the main content area outside the provider.
+  const prevTreeRefreshKeyRef = useRef(treeRefreshKey)
+  useEffect(() => {
+    if (prevTreeRefreshKeyRef.current !== treeRefreshKey) {
+      prevTreeRefreshKeyRef.current = treeRefreshKey
+      sidebarTabs?.reloadTabContent(`hierarchy-${hierarchyCollectionSlug}`)
+    }
+  }, [treeRefreshKey, sidebarTabs, hierarchyCollectionSlug])
 
   // Only show selection if the current list view matches this tab's hierarchy collection
   const parentParam = searchParams.get('parent')

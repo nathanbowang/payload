@@ -10,8 +10,8 @@ import type { CollectionOption } from '../../../elements/CreateDocumentButton/in
 
 import { CreateDocumentButton } from '../../../elements/CreateDocumentButton/index.js'
 import { ListHeader } from '../../../elements/ListHeader/index.js'
+import { useHierarchy } from '../../../providers/Hierarchy/index.js'
 import { useRouteCache } from '../../../providers/RouteCache/index.js'
-import { useSidebarTabs } from '../../../providers/SidebarTabs/index.js'
 import { DocumentListSelection } from '../DocumentListSelection/index.js'
 import './index.scss'
 
@@ -46,11 +46,11 @@ export function HierarchyListHeader({
   const { labels } = collectionConfig
   const title = currentItemTitle || getTranslation(labels?.plural, i18n)
   const { clearRouteCache } = useRouteCache()
-  const sidebarTabs = useSidebarTabs()
+  const { refreshTree } = useHierarchy()
 
   const handleSave = () => {
     clearRouteCache()
-    sidebarTabs?.reloadTabContent(`hierarchy-${collectionConfig.slug}`)
+    refreshTree()
   }
 
   return (
