@@ -188,11 +188,6 @@ export const HierarchyFieldClient: React.FC<HierarchyFieldClientProps> = (props)
               selectedIds={selectedIds}
             />
           )}
-          {hasMany && selectedIds.length === 0 && (
-            <span className={`${baseClass}__placeholder`}>
-              {t('general:noLabel', { label: hierarchyLabel })}
-            </span>
-          )}
           {!readOnly && (hasMany || selectedIds.length === 0) && (
             <Button
               buttonStyle="dashed"

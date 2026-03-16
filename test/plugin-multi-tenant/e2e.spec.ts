@@ -1299,18 +1299,16 @@ async function setTenantFilter({
   tenant: string
   urlUtil?: AdminUrlUtil
 }): Promise<void> {
+  if (urlUtil) {
+    await page.goto(urlUtil.list)
+  }
+
   await openNav(page)
   await selectInput({
     multiSelect: false,
     option: tenant,
     selectLocator: page.locator('.tenant-selector'),
   })
-
-  // Navigate AFTER changing tenant to bypass Next.js RSC caching
-  // router.refresh() may serve cached payloads that don't reflect cookie changes
-  if (urlUtil) {
-    await page.goto(urlUtil.list)
-  }
 }
 
 async function switchGlobalDocTenant({

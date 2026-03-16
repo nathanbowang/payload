@@ -14,6 +14,8 @@ type UseChildrenArgs = {
   /** Base filter to apply to all queries (e.g., tenant filter) */
   baseFilter?: null | Where
   cache?: TreeCache
+  /** Pre-computed cache key to ensure consistency with cache population */
+  cacheKey?: string
   collectionSlug: string
   enabled?: boolean
   filterByCollections?: string[]
@@ -38,6 +40,7 @@ export const useChildren = ({
   allPossibleTypeValues,
   baseFilter,
   cache,
+  cacheKey: cacheKeyProp,
   collectionSlug,
   enabled = true,
   filterByCollections,
@@ -50,7 +53,9 @@ export const useChildren = ({
 }: UseChildrenArgs): UseChildrenReturn => {
   const filterKey = filterByCollections?.length ? filterByCollections.slice().sort().join(',') : ''
   const baseFilterKey = baseFilter ? JSON.stringify(baseFilter) : ''
-  const cacheKey = `${collectionSlug}-${parentId}-${filterKey}-${baseFilterKey}`
+  // Use provided cacheKey for consistency with cache population, or compute if not provided
+  const cacheKey =
+    cacheKeyProp ?? `${collectionSlug}-${String(parentId)}-${filterKey}-${baseFilterKey}`
   const cachedData = cache?.current.get(cacheKey)
 
   // Check if we have initial data for this specific parent

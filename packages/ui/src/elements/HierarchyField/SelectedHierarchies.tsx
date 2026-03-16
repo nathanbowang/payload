@@ -134,14 +134,7 @@ export const SelectedHierarchies: React.FC<SelectedHierarchiesProps> = ({
   }
 
   if (items.length === 0) {
-    const label = collectionConfig?.labels?.plural
-    const translatedLabel = label ? getTranslation(label, i18n) : hierarchySlug
-
-    return (
-      <div className={`${baseClass}__empty`}>
-        {t('general:noLabel', { label: translatedLabel })}
-      </div>
-    )
+    return null
   }
 
   return (

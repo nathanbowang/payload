@@ -18,7 +18,6 @@ import { TreeNode } from './TreeNode/index.js'
 import { useChildren } from './useChildren.js'
 
 const baseClass = 'tree'
-const DEFAULT_TREE_LIMIT = 10
 
 const getDocumentTitle = (doc: TreeDocument, useAsTitle: string | undefined): string => {
   const docId: number | string = doc.id
@@ -48,7 +47,7 @@ const TreeInner: React.FC<TreeProps> = ({
   selectedNodeId,
   showAllOption = true,
   toggleNode,
-  treeLimit = DEFAULT_TREE_LIMIT,
+  treeLimit = 10,
   typeFieldName,
   useAsTitle,
 }) => {
@@ -99,7 +98,7 @@ const TreeInner: React.FC<TreeProps> = ({
       ? filterByCollections.slice().sort().join(',')
       : ''
     for (const [parentKey, docs] of docsByParent) {
-      const cacheKey = `${collectionSlug}-${parentKey}-${filterKey}`
+      const cacheKey = `${collectionSlug}-${parentKey}-${filterKey}-${baseFilterKey}`
       const parentMeta = initialData.loadedParents[parentKey]
 
       if (parentMeta) {
@@ -124,7 +123,7 @@ const TreeInner: React.FC<TreeProps> = ({
         })
       }
     }
-  }, [initialData, filterByCollections, parentFieldName, collectionSlug, treeLimit])
+  }, [initialData, filterByCollections, parentFieldName, collectionSlug, treeLimit, baseFilterKey])
   const treeRef = useRef<HTMLDivElement>(null)
 
   // Fetch root nodes (items with no parent)

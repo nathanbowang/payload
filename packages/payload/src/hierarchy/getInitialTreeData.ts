@@ -11,11 +11,12 @@ export type GetInitialTreeDataArgs = {
   /** Filter tree to only show folders that allow these collection types (or are unrestricted) */
   filterByCollections?: string[]
   limit?: number
-  req: PayloadRequest
+  payload: PayloadRequest['payload']
   /** The currently selected node ID. When provided, ensures siblings are loaded to include this node. */
   selectedNodeId?: null | number | string
   /** The parent ID of the selected node. Required when selectedNodeId is provided. */
   selectedNodeParentId?: null | number | string
+  user: PayloadRequest['user']
 }
 
 export type InitialTreeData = {
@@ -30,11 +31,12 @@ export const getInitialTreeData = async ({
   expandedNodeIds = [],
   filterByCollections,
   limit,
-  req,
+  payload,
   selectedNodeId,
   selectedNodeParentId,
+  user,
 }: GetInitialTreeDataArgs): Promise<InitialTreeData> => {
-  const collectionConfig = req.payload.collections[collectionSlug]?.config
+  const collectionConfig = payload.collections[collectionSlug]?.config
 
   if (!collectionConfig || !collectionConfig.hierarchy) {
     throw new Error(`Collection ${collectionSlug} is not a hierarchy`)
@@ -117,15 +119,14 @@ export const getInitialTreeData = async ({
     const whereClause = conditions.length > 1 ? { and: conditions } : parentCondition
 
     while (hasMore) {
-      const result = await req.payload.find({
+      const result = await payload.find({
         collection: collectionSlug,
         depth: 0,
         limit: effectiveLimit,
         overrideAccess: false,
         page: currentPage,
-        req,
         sort: useAsTitle,
-        user: req.user,
+        user,
         where: whereClause,
       })
 

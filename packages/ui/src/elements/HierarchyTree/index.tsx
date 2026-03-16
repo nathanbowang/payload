@@ -15,6 +15,7 @@ export const HierarchyTree: React.FC<HierarchyTreeProps> = ({
   filterByCollections,
   icon,
   initialData: initialDataProp,
+  initialExpandedNodes: initialExpandedNodesProp,
   onNodeClick,
   selectedNodeId,
   useAsTitle: useAsTitleProp,
@@ -28,9 +29,12 @@ export const HierarchyTree: React.FC<HierarchyTreeProps> = ({
 
   // Get initialData from context (cleared on refresh, hydrated by HydrateHierarchyProvider)
   // Falls back to prop for first render before hydration completes
+  // Skip context data if baseFilter has changed (tenant switch without navigation)
   const contextData = getTreeDataForCollection(collectionSlug)
-  const initialData = contextData ?? initialDataProp
-
+  const baseFilterKey = baseFilter ? JSON.stringify(baseFilter) : ''
+  const contextBaseFilterKey = contextData?.baseFilter ? JSON.stringify(contextData.baseFilter) : ''
+  const contextDataMatchesFilter = baseFilterKey === contextBaseFilterKey
+  const initialData = contextDataMatchesFilter ? (contextData ?? initialDataProp) : initialDataProp
   const { getEntityConfig } = useConfig()
 
   const collectionConfig = getEntityConfig({ collectionSlug })
@@ -52,10 +56,15 @@ export const HierarchyTree: React.FC<HierarchyTreeProps> = ({
   )
 
   // Get expanded nodes for THIS collection specifically
-  const expandedNodes = useMemo(
-    () => getExpandedNodesForCollection(collectionSlug),
-    [collectionSlug, getExpandedNodesForCollection],
-  )
+  // Falls back to prop for first render before hydration completes
+  const expandedNodes = useMemo(() => {
+    const contextExpanded = getExpandedNodesForCollection(collectionSlug)
+    if (contextExpanded.size > 0) {
+      return contextExpanded
+    }
+    // Fallback to initial prop before context is hydrated
+    return initialExpandedNodesProp ? new Set(initialExpandedNodesProp) : contextExpanded
+  }, [collectionSlug, getExpandedNodesForCollection, initialExpandedNodesProp])
 
   // Toggle node for THIS collection specifically
   const handleToggleNode = useCallback(

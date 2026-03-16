@@ -5,12 +5,6 @@ export type HierarchyDocument = {
   [key: string]: unknown
 } & TypeWithID
 
-export type HierarchyNode = {
-  hasChildren: boolean
-  id: number | string
-  title: string
-}
-
 export type HierarchyInitialData = {
   baseFilter?: null | Where
   docs: HierarchyDocument[]
@@ -25,29 +19,9 @@ export type HierarchyTreeProps = {
   icon?: React.ReactNode
   /** Initial data for first render (before context hydration). After hydration, context data takes precedence. */
   initialData?: HierarchyInitialData | null
+  /** Initial expanded nodes for first render (before context hydration). After hydration, context takes precedence. */
+  initialExpandedNodes?: (number | string)[]
   onNodeClick?: ({ id }: { id: null | number | string }) => void
-  selectedNodeId?: null | number | string
-  useAsTitle?: string
-}
-
-export type CachedChildren = {
-  children: HierarchyDocument[]
-  hasMore: boolean
-  page: number
-  totalDocs: number
-}
-
-export type TreeNodeProps = {
-  cache?: React.MutableRefObject<Map<string, CachedChildren>>
-  collectionSlug: string
-  depth?: number
-  expandedNodes: Set<number | string>
-  limit?: number
-  node: HierarchyNode
-  onSelect: ({ id }: { id: number | string }) => void
-  onToggle: ({ id }: { id: number | string }) => void
-  parentFieldName: string
-  selected: boolean
   selectedNodeId?: null | number | string
   useAsTitle?: string
 }

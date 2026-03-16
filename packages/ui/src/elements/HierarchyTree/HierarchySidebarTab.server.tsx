@@ -170,9 +170,10 @@ export const HierarchySidebarTabServer: React.FC<HierarchySidebarTabServerProps>
       expandedNodeIds: initialExpandedNodes,
       ...(initialSelectedFilters.length > 0 && { filterByCollections: initialSelectedFilters }),
       ...(treeLimit !== undefined && { limit: treeLimit }),
-      req,
+      payload,
       selectedNodeId,
       selectedNodeParentId,
+      user: req.user,
     })
   } catch (error) {
     payload.logger.warn({

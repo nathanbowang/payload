@@ -12,6 +12,7 @@ export type HierarchyInitialData = {
 }
 
 export type HierarchyTreeCacheEntry = {
+  baseFilter?: null | Where
   docs: HierarchyDocument[]
   loadedParents: Record<string, { hasMore: boolean; loadedCount?: number; totalDocs: number }>
 }

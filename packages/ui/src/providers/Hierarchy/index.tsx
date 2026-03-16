@@ -133,12 +133,13 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
         // If baseFilter is provided, replace cache entirely (tenant changed)
         // Otherwise merge to support incremental loading
         if (newBaseFilter !== undefined || !existingEntry) {
-          newCache.set(slug, treeData)
+          newCache.set(slug, { ...treeData, baseFilter: newBaseFilter ?? null })
         } else {
           const existingDocIds = new Set(existingEntry.docs.map((doc) => doc.id))
           const newDocs = treeData.docs.filter((doc) => !existingDocIds.has(doc.id))
 
           newCache.set(slug, {
+            baseFilter: existingEntry.baseFilter,
             docs: [...existingEntry.docs, ...newDocs],
             loadedParents: {
               ...existingEntry.loadedParents,
