@@ -204,7 +204,7 @@ export const DefaultNav: React.FC<NavProps> = async (props) => {
             {RenderedAfterNavLinks}
           </>
         ),
-        Icon: <TableViewIcon />,
+        Icon: <TableViewIcon color="muted" />,
       },
       isDefaultActive: true,
       label: i18n.t('general:collections'),

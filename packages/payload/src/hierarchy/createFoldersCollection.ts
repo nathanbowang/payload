@@ -82,7 +82,10 @@ export function createFoldersCollection(options: CreateFoldersCollectionOptions)
       admin: {
         ...hierarchyOverrides?.admin,
         components: {
-          Icon: '@payloadcms/ui#FolderIcon',
+          Icon: {
+            clientProps: { color: 'muted' },
+            path: '@payloadcms/ui#FolderIcon',
+          },
           ...hierarchyOverrides?.admin?.components,
         },
         useHeaderButton: hierarchyOverrides?.admin?.useHeaderButton ?? true,

@@ -1,9 +1,19 @@
 import React from 'react'
 
-export const TableViewIcon = () => {
+import './index.scss'
+
+export const TableViewIcon = ({
+  className,
+  color,
+}: {
+  className?: string
+  color?: 'dark' | 'default' | 'muted'
+}) => {
+  const colorClass = color ? `icon--table-view--${color}` : ''
+
   return (
     <svg
-      className="icon icon--table-view"
+      className={[className, 'icon icon--table-view', colorClass].filter(Boolean).join(' ')}
       fill="currentColor"
       height="20"
       viewBox="0 0 16 16"

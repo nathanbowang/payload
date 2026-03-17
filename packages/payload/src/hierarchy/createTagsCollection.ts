@@ -75,7 +75,10 @@ export function createTagsCollection(options: CreateTagsCollectionOptions): Coll
       admin: {
         ...hierarchyOverrides?.admin,
         components: {
-          Icon: '@payloadcms/ui#TagIcon',
+          Icon: {
+            clientProps: { color: 'muted' },
+            path: '@payloadcms/ui#TagIcon',
+          },
           ...hierarchyOverrides?.admin?.components,
         },
       },
