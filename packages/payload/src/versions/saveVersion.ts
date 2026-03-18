@@ -9,6 +9,7 @@ import { sanitizeInternalFields } from '../utilities/sanitizeInternalFields.js'
 import { getQueryDraftsSelect } from './drafts/getQueryDraftsSelect.js'
 import { enforceMaxVersions } from './enforceMaxVersions.js'
 import { saveSnapshot } from './saveSnapshot.js'
+import { updateLatestVersion } from './updateLatestVersion.js'
 
 type Args<T extends JsonObject = JsonObject> = {
   autosave?: boolean
@@ -53,7 +54,7 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
   unpublish,
 }: Args<TData>): Promise<JsonObject | null> {
   let result: JsonObject | undefined
-  let createNewVersion = true
+  let createdNewVersion = false
   const now = new Date().toISOString()
   const versionData: {
     _status?: 'draft'
@@ -69,135 +70,22 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
   }
 
   try {
-    if (unpublish) {
-      let docs
-      const findVersionArgs = {
-        limit: 1,
-        pagination: false,
+    if (unpublish || autosave) {
+      result = await updateLatestVersion({
+        id,
+        collection,
+        global,
+        now,
+        payload,
         req,
-        sort: '-updatedAt',
-      }
-
-      if (collection) {
-        ;({ docs } = await payload.db.findVersions<TData>({
-          ...findVersionArgs,
-          collection: collection.slug,
-          where: {
-            parent: {
-              equals: id,
-            },
-          },
-        }))
-      } else {
-        ;({ docs } = await payload.db.findGlobalVersions<TData>({
-          ...findVersionArgs,
-          global: global!.slug,
-        }))
-      }
-
-      const [latestVersion] = docs
-
-      if (latestVersion) {
-        createNewVersion = false
-
-        const updateVersionArgs = {
-          id: latestVersion.id,
-          req,
-          versionData: {
-            createdAt: new Date(latestVersion.createdAt).toISOString(),
-            latest: true,
-            parent: id,
-            updatedAt: now,
-            version: {
-              ...versionData,
-            },
-          },
-        }
-
-        if (collection) {
-          result = await payload.db.updateVersion<TData>({
-            ...updateVersionArgs,
-            collection: collection.slug,
-            req,
-          })
-        } else {
-          result = await payload.db.updateGlobalVersion<TData>({
-            ...updateVersionArgs,
-            global: global!.slug,
-            req,
-          })
-        }
-      }
+        shouldUpdate: autosave ? (v) => 'autosave' in v && v.autosave === true : undefined,
+        versionData,
+      })
     }
 
-    if (autosave) {
-      let docs
-      const findVersionArgs = {
-        limit: 1,
-        pagination: false,
-        req,
-        sort: '-updatedAt',
-      }
+    if (!result) {
+      createdNewVersion = true
 
-      if (collection) {
-        ;({ docs } = await payload.db.findVersions<TData>({
-          ...findVersionArgs,
-          collection: collection.slug,
-          limit: 1,
-          pagination: false,
-          req,
-          where: {
-            parent: {
-              equals: id,
-            },
-          },
-        }))
-      } else {
-        ;({ docs } = await payload.db.findGlobalVersions<TData>({
-          ...findVersionArgs,
-          global: global!.slug,
-          limit: 1,
-          pagination: false,
-          req,
-        }))
-      }
-      const [latestVersion] = docs
-
-      // overwrite the latest version if it's set to autosave
-      if (latestVersion && 'autosave' in latestVersion && latestVersion.autosave === true) {
-        createNewVersion = false
-
-        const updateVersionArgs = {
-          id: latestVersion.id,
-          req,
-          versionData: {
-            createdAt: new Date(latestVersion.createdAt).toISOString(),
-            latest: true,
-            parent: id,
-            updatedAt: now,
-            version: {
-              ...versionData,
-            },
-          },
-        }
-
-        if (collection) {
-          result = await payload.db.updateVersion<TData>({
-            ...updateVersionArgs,
-            collection: collection.slug,
-            req,
-          })
-        } else {
-          result = await payload.db.updateGlobalVersion<TData>({
-            ...updateVersionArgs,
-            global: global!.slug,
-            req,
-          })
-        }
-      }
-    }
-
-    if (createNewVersion) {
       const createVersionArgs = {
         autosave: Boolean(autosave),
         collectionSlug: undefined as string | undefined,
@@ -251,7 +139,7 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
 
   const max = getVersionsMax(collection || global!)
 
-  if (createNewVersion && max > 0) {
+  if (createdNewVersion && max > 0) {
     await enforceMaxVersions({
       id,
       collection,
