@@ -24,6 +24,7 @@ type Args<T extends JsonObject = JsonObject> = {
   returning?: boolean
   select?: SelectType
   snapshot?: any
+  unpublish?: boolean
 }
 
 export async function saveVersion<TData extends JsonObject = JsonObject>(
@@ -49,6 +50,7 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
   returning,
   select,
   snapshot,
+  unpublish,
 }: Args<TData>): Promise<JsonObject | null> {
   let result: JsonObject | undefined
   let createNewVersion = true
@@ -67,6 +69,67 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
   }
 
   try {
+    if (unpublish) {
+      let docs
+      const findVersionArgs = {
+        limit: 1,
+        pagination: false,
+        req,
+        sort: '-updatedAt',
+      }
+
+      if (collection) {
+        ;({ docs } = await payload.db.findVersions<TData>({
+          ...findVersionArgs,
+          collection: collection.slug,
+          where: {
+            parent: {
+              equals: id,
+            },
+          },
+        }))
+      } else {
+        ;({ docs } = await payload.db.findGlobalVersions<TData>({
+          ...findVersionArgs,
+          global: global!.slug,
+        }))
+      }
+
+      const [latestVersion] = docs
+
+      if (latestVersion) {
+        createNewVersion = false
+
+        const updateVersionArgs = {
+          id: latestVersion.id,
+          req,
+          versionData: {
+            createdAt: new Date(latestVersion.createdAt).toISOString(),
+            latest: true,
+            parent: id,
+            updatedAt: now,
+            version: {
+              ...versionData,
+            },
+          },
+        }
+
+        if (collection) {
+          result = await payload.db.updateVersion<TData>({
+            ...updateVersionArgs,
+            collection: collection.slug,
+            req,
+          })
+        } else {
+          result = await payload.db.updateGlobalVersion<TData>({
+            ...updateVersionArgs,
+            global: global!.slug,
+            req,
+          })
+        }
+      }
+    }
+
     if (autosave) {
       let docs
       const findVersionArgs = {
