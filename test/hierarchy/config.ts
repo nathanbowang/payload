@@ -39,6 +39,37 @@ export const Categories: CollectionConfig = {
   },
 }
 
+// Pages collection with dedicated slug field (tests slugField config option)
+export const Pages: CollectionConfig = {
+  slug: 'pages',
+  admin: {
+    useAsTitle: 'title',
+  },
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'slug',
+      type: 'text',
+    },
+  ],
+  hierarchy: {
+    admin: {
+      components: {
+        Icon: {
+          clientProps: { color: '#FF1493' }, // Neon Pink
+          path: '/components/ColorCircleIcon.tsx#ColorCircleIcon',
+        },
+      },
+    },
+    parentFieldName: 'parent',
+    slugField: 'slug', // Use dedicated slug field for _h_slugPath
+  },
+}
+
 // Regions collection with explicit group (should appear in BOTH nav and as sidebar tab)
 export const Regions: CollectionConfig = {
   slug: 'regions',
@@ -195,7 +226,7 @@ export default buildConfigWithDefaults({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Categories, Departments, Folders, Organizations, Products, Regions],
+  collections: [Categories, Departments, Folders, Organizations, Pages, Products, Regions],
   debug: true,
   localization: {
     defaultLocale: 'en',

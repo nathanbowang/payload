@@ -18,9 +18,15 @@ type BuildLocalizedPathsArgs = {
    */
   req: PayloadRequest
   /**
-   * Function to convert title text into URL-safe slug segments
+   * Function to convert title text into URL-safe slug segments.
+   * Only used when slugValue is not provided.
    */
   slugify: (val: string) => string
+  /**
+   * Optional pre-computed slug value by locale.
+   * When provided, uses these values directly instead of slugifying the title.
+   */
+  slugValue?: Record<string, string>
   /**
    * The localized title value object (e.g., { en: "Home", es: "Inicio", de: "Startseite" })
    */
@@ -74,7 +80,7 @@ type BuildLocalizedPathsResult = {
 export function buildLocalizedHierarchyPaths(
   args: BuildLocalizedPathsArgs,
 ): BuildLocalizedPathsResult {
-  const { parentSlugPath, parentTitlePath, req, slugify, titleValue } = args
+  const { parentSlugPath, parentTitlePath, req, slugify, slugValue, titleValue } = args
 
   const slugPathsByLocale: Record<string, string> = {}
   const titlePathsByLocale: Record<string, string> = {}
@@ -90,7 +96,19 @@ export function buildLocalizedHierarchyPaths(
     })
 
     if (localizedTitle) {
-      const slugSegment = slugify(localizedTitle)
+      // Use provided slugValue if available, otherwise slugify the title
+      let slugSegment: string
+      if (slugValue) {
+        const localizedSlug = getLocalizedValue({
+          fallbackLocale: req.fallbackLocale,
+          fieldType: 'text',
+          locale: loc,
+          value: slugValue,
+        })
+        slugSegment = localizedSlug || slugify(localizedTitle)
+      } else {
+        slugSegment = slugify(localizedTitle)
+      }
       const titleSegment = localizedTitle
 
       slugPathsByLocale[loc] = parentSlugPath

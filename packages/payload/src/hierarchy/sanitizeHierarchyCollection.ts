@@ -136,6 +136,8 @@ export const sanitizeHierarchyCollection = (
   const useHeaderButton = collectionConfig.hierarchy.admin?.useHeaderButton ?? false
   const injectSidebarTab = collectionConfig.hierarchy.admin?.injectSidebarTab ?? true
 
+  const slugField = collectionConfig.hierarchy.slugField
+
   ;(collectionConfig as unknown as { hierarchy: SanitizedHierarchyConfig }).hierarchy = {
     admin: {
       components: {
@@ -150,6 +152,7 @@ export const sanitizeHierarchyCollection = (
     joinField,
     parentFieldName,
     relatedCollections: {},
+    slugField,
     slugify,
     slugPathFieldName,
     titlePathFieldName,

@@ -1286,4 +1286,79 @@ describe('Hierarchy', () => {
       expect(stats.hits).toBeGreaterThanOrEqual(0) // Some cache hits may occur
     })
   })
+
+  describe('Slug Field Configuration', () => {
+    const createdPageIds: (number | string)[] = []
+
+    afterEach(async () => {
+      for (const id of createdPageIds) {
+        await payload.delete({ collection: 'pages', id }).catch(() => {})
+      }
+      createdPageIds.length = 0
+    })
+
+    it('should use slugField value directly for _h_slugPath', async () => {
+      // Pages collection has slugField: 'slug' configured
+      const page = await payload.create({
+        collection: 'pages',
+        context: { computeHierarchyPaths: true },
+        data: {
+          parent: null,
+          slug: 'about-us', // Different from title
+          title: 'About Our Company', // Would slugify to 'about-our-company'
+        },
+      })
+      createdPageIds.push(page.id)
+
+      // Should use slug field value directly, not slugified title
+      expect(page._h_slugPath).toBe('about-us')
+      expect(page._h_titlePath).toBe('About Our Company')
+    })
+
+    it('should use slugField value for nested documents', async () => {
+      // Create root page
+      const rootPage = await payload.create({
+        collection: 'pages',
+        data: {
+          parent: null,
+          slug: 'home',
+          title: 'Home Page',
+        },
+      })
+      createdPageIds.push(rootPage.id)
+
+      // Create child page
+      const childPage = await payload.create({
+        collection: 'pages',
+        context: { computeHierarchyPaths: true },
+        data: {
+          parent: rootPage.id,
+          slug: 'services',
+          title: 'Our Services',
+        },
+      })
+      createdPageIds.push(childPage.id)
+
+      // Should use slug field values for path
+      expect(childPage._h_slugPath).toBe('home/services')
+      expect(childPage._h_titlePath).toBe('Home Page/Our Services')
+    })
+
+    it('should fall back to slugified title when slug field is empty', async () => {
+      const page = await payload.create({
+        collection: 'pages',
+        context: { computeHierarchyPaths: true },
+        data: {
+          parent: null,
+          slug: '', // Empty slug
+          title: 'Contact Us',
+        },
+      })
+      createdPageIds.push(page.id)
+
+      // Should fall back to slugified title
+      expect(page._h_slugPath).toBe('contact-us')
+      expect(page._h_titlePath).toBe('Contact Us')
+    })
+  })
 })

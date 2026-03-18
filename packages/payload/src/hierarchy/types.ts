@@ -80,8 +80,16 @@ export type HierarchyConfig = {
    */
   parentFieldName: string
   /**
+   * Name of the field to use for slug path generation.
+   * When set, uses this field's value directly instead of slugifying the title.
+   * Useful when you have a dedicated slug field (e.g., 'slug') separate from the title.
+   * @example 'slug' - uses the 'slug' field value as-is for path segments
+   */
+  slugField?: string
+  /**
    * Custom function to slugify text for path generation
    * Used by computeSlugPath() utility for generating slug-based breadcrumb paths
+   * Only used when slugField is not set.
    * Defaults to internal slugify implementation
    */
   slugify?: (text: string) => string
@@ -124,6 +132,10 @@ export type SanitizedHierarchyConfig = {
    * Auto-populated during validation - maps collection slug to field info
    */
   relatedCollections: Record<string, SanitizedHierarchyRelatedCollection>
+  /**
+   * Field name for slug values, or undefined to use slugified title
+   */
+  slugField?: string
   slugify: (text: string) => string
   slugPathFieldName: string
   titlePathFieldName: string

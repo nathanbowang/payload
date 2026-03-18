@@ -9,6 +9,22 @@ export function findUseAsTitleField(collectionConfig: CollectionConfig): {
   return iterateFields({ fields: collectionConfig.fields, titleFieldName })
 }
 
+/**
+ * Find a field by name and return its localization status.
+ * Returns undefined if field is not found.
+ */
+export function findFieldByName(
+  collectionConfig: CollectionConfig,
+  fieldName: string,
+): { fieldName: string; localized: boolean } | undefined {
+  try {
+    const result = iterateFields({ fields: collectionConfig.fields, titleFieldName: fieldName })
+    return { fieldName: result.titleFieldName, localized: result.localized }
+  } catch {
+    return undefined
+  }
+}
+
 function iterateFields({ fields, titleFieldName }: { fields: Field[]; titleFieldName: string }): {
   localized: boolean
   titleFieldName: string
@@ -38,20 +54,26 @@ function iterateFields({ fields, titleFieldName }: { fields: Field[]; titleField
       case 'collapsible':
         {
           const result = iterateFields({ fields: field.fields, titleFieldName })
-          if (result) {titleField = result}
+          if (result) {
+            titleField = result
+          }
         }
         break
       case 'group':
         if (!('name' in field)) {
           const result = iterateFields({ fields: field.fields, titleFieldName })
-          if (result) {titleField = result}
+          if (result) {
+            titleField = result
+          }
         }
         break
       case 'tabs':
         for (const tab of field.tabs) {
           if (!('name' in tab)) {
             const result = iterateFields({ fields: tab.fields, titleFieldName })
-            if (result) {titleField = result}
+            if (result) {
+              titleField = result
+            }
           }
         }
     }

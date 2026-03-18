@@ -2,13 +2,9 @@ import type { SanitizedCollectionConfig } from '../../collections/config/types.j
 import type { Document, PayloadRequest } from '../../types/index.js'
 
 import { slugify as payloadSlugify } from '../../utilities/slugify.js'
-import {
-  HIERARCHY_DEFAULT_LOCALE,
-  HIERARCHY_SLUG_PATH_FIELD,
-  HIERARCHY_TITLE_PATH_FIELD,
-} from '../constants.js'
+import { HIERARCHY_SLUG_PATH_FIELD, HIERARCHY_TITLE_PATH_FIELD } from '../constants.js'
 import { buildLocalizedHierarchyPaths } from './buildLocalizedHierarchyPaths.js'
-import { findUseAsTitleField } from './findUseAsTitle.js'
+import { findFieldByName, findUseAsTitleField } from './findUseAsTitle.js'
 import { getLocalizedValue } from './getLocalizedValue.js'
 
 type ComputePathsArgs = {
@@ -66,6 +62,45 @@ const getTitleValue = ({
   return titleValue
 }
 
+// Helper to get slug value from a dedicated slug field
+const getSlugFieldValue = ({
+  document,
+  isSlugLocalized = false,
+  locale,
+  req,
+  slugFieldName,
+}: {
+  document: Document
+  isSlugLocalized?: boolean
+  locale?: string
+  req: PayloadRequest
+  slugFieldName: string
+}): Record<string, string> | string | undefined => {
+  const slugValue = document[slugFieldName]
+
+  if (!slugValue) {
+    return undefined
+  }
+
+  // If field is localized and we want all locales, return the full object
+  if (isSlugLocalized && locale === 'all' && typeof slugValue === 'object') {
+    return slugValue
+  }
+
+  // Single locale - use getLocalizedValue to handle fallback
+  if (isSlugLocalized && typeof slugValue === 'object') {
+    const localizedValue = getLocalizedValue({
+      fallbackLocale: req.fallbackLocale,
+      fieldType: 'text',
+      locale: locale || req.locale || 'en',
+      value: slugValue,
+    })
+    return localizedValue || undefined
+  }
+
+  return slugValue
+}
+
 /**
  * Computes both slug and title breadcrumb paths for a document by walking up the parent chain.
  * More efficient than computing them separately since it only walks the chain once.
@@ -94,6 +129,11 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
     (collection.hierarchy !== false && collection.hierarchy.slugify) ||
     ((text: string) => payloadSlugify(text) || '')
   const { localized: isTitleLocalized, titleFieldName } = findUseAsTitleField(collection)
+
+  // Check for dedicated slug field
+  const slugFieldName = collection.hierarchy !== false ? collection.hierarchy.slugField : undefined
+  const slugFieldInfo = slugFieldName ? findFieldByName(collection, slugFieldName) : undefined
+  const isSlugFieldLocalized = slugFieldInfo?.localized ?? false
 
   // Initialize cache if it doesn't exist
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -147,16 +187,27 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
         titleFieldName,
       })
 
+      const slugValue = slugFieldName
+        ? getSlugFieldValue({
+            document: doc,
+            isSlugLocalized: isSlugFieldLocalized,
+            locale,
+            req,
+            slugFieldName,
+          })
+        : undefined
+
       if (isTitleLocalized && locale === 'all') {
         return buildLocalizedHierarchyPaths({
           req,
           slugify,
+          slugValue: slugValue as Record<string, string> | undefined,
           titleValue: titleValue as Record<string, string>,
         })
       }
 
       return {
-        slugPath: slugify(titleValue as string),
+        slugPath: slugValue !== undefined ? (slugValue as string) : slugify(titleValue as string),
         titlePath: titleValue as string,
       }
     }
@@ -218,6 +269,7 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
                 [parentHierarchyConfig.slugPathFieldName]: true,
                 [parentHierarchyConfig.titlePathFieldName]: true,
                 [parentTitleField]: true,
+                ...(slugFieldName ? { [slugFieldName]: true } : {}),
               },
               user: req.user,
             })
@@ -282,7 +334,7 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
                   title: parentTitle,
                   titlePath: parentTitlePath,
                 }
-              } catch (localeError) {
+              } catch (_localeError) {
                 // This locale doesn't exist, skip it
               }
             }
@@ -324,6 +376,7 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
               [parentHierarchyConfig.slugPathFieldName]: true,
               [parentHierarchyConfig.titlePathFieldName]: true,
               [parentTitleField]: true,
+              ...(slugFieldName ? { [slugFieldName]: true } : {}),
             },
             user: req.user,
           })
@@ -352,16 +405,27 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
         titleFieldName,
       })
 
+      const slugValue = slugFieldName
+        ? getSlugFieldValue({
+            document: doc,
+            isSlugLocalized: isSlugFieldLocalized,
+            locale,
+            req,
+            slugFieldName,
+          })
+        : undefined
+
       if (isTitleLocalized && locale === 'all') {
         return buildLocalizedHierarchyPaths({
           req,
           slugify,
+          slugValue: slugValue as Record<string, string> | undefined,
           titleValue: titleValue as Record<string, string>,
         })
       }
 
       return {
-        slugPath: slugify(titleValue as string),
+        slugPath: slugValue !== undefined ? (slugValue as string) : slugify(titleValue as string),
         titlePath: titleValue as string,
       }
     }
@@ -424,6 +488,17 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
         }
       }
 
+      // Get slug value if slugField is configured
+      const docSlugValue = slugFieldName
+        ? getSlugFieldValue({
+            document: doc,
+            isSlugLocalized: isSlugFieldLocalized,
+            locale,
+            req,
+            slugFieldName,
+          })
+        : undefined
+
       // If parent paths are undefined (parent fetch failed or paths not computed),
       // buildLocalizedHierarchyPaths will handle it by using just the child's title
       const result = buildLocalizedHierarchyPaths({
@@ -431,6 +506,7 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
         parentTitlePath: parentTitlePathObj,
         req,
         slugify,
+        slugValue: docSlugValue as Record<string, string> | undefined,
         titleValue: docTitle as Record<string, string>,
       })
 
@@ -443,9 +519,24 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
       return result
     }
 
-    // Single locale case
+    // Single locale case - get slug value if slugField is configured
+    const singleLocaleSlugValue = slugFieldName
+      ? getSlugFieldValue({
+          document: doc,
+          isSlugLocalized: isSlugFieldLocalized,
+          locale,
+          req,
+          slugFieldName,
+        })
+      : undefined
+
+    const slugSegment =
+      singleLocaleSlugValue !== undefined
+        ? (singleLocaleSlugValue as string)
+        : slugify(docTitle as string)
+
     const result = {
-      slugPath: (parent[parentSlugPathFieldName] as string) + '/' + slugify(docTitle as string),
+      slugPath: (parent[parentSlugPathFieldName] as string) + '/' + slugSegment,
       titlePath: (parent[parentTitlePathFieldName] as string) + '/' + (docTitle as string),
     }
 
@@ -457,6 +548,7 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
 
     return result
   } else {
+    // Root document (no parent)
     const titleValue = getTitleValue({
       document: doc,
       isTitleLocalized,
@@ -469,18 +561,30 @@ export async function computePaths(args: ComputePathsArgs): Promise<ComputePaths
       [titleFieldName]: titleValue,
     }
 
+    const rootSlugValue = slugFieldName
+      ? getSlugFieldValue({
+          document: doc,
+          isSlugLocalized: isSlugFieldLocalized,
+          locale,
+          req,
+          slugFieldName,
+        })
+      : undefined
+
     // Handle localized case (locale === 'all' with localized title field)
     if (isTitleLocalized && locale === 'all') {
       return buildLocalizedHierarchyPaths({
         req,
         slugify,
+        slugValue: rootSlugValue as Record<string, string> | undefined,
         titleValue: titleValue as Record<string, string>,
       })
     }
 
     // Single locale case
     return {
-      slugPath: slugify(titleValue as string),
+      slugPath:
+        rootSlugValue !== undefined ? (rootSlugValue as string) : slugify(titleValue as string),
       titlePath: titleValue as string,
     }
   }
