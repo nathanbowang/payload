@@ -226,6 +226,7 @@ export const thTranslations: DefaultTranslationsObject = {
     ascending: 'น้อยไปมาก',
     automatic: 'อัตโนมัติ',
     backToDashboard: 'กลับไปหน้าแดชบอร์ด',
+    by: 'โดย',
     cancel: 'ยกเลิก',
     changesNotSaved: 'การเปลี่ยนแปลงยังไม่ได้ถูกบันทึก ถ้าคุณออกตอนนี้ สิ่งที่แก้ไขไว้จะหายไป',
     clear:

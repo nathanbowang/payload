@@ -233,6 +233,7 @@ export const svTranslations: DefaultTranslationsObject = {
     ascending: 'Stigande',
     automatic: 'Automatiskt',
     backToDashboard: 'Tillbaka till översikten',
+    by: 'Av',
     cancel: 'Avbryt',
     changesNotSaved:
       'Dina ändringar har inte sparats. Om du lämnar nu kommer du att förlora dina ändringar.',

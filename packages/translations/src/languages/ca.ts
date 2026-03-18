@@ -234,6 +234,7 @@ export const caTranslations: DefaultTranslationsObject = {
     ascending: 'Ascendent',
     automatic: 'Automàtic',
     backToDashboard: 'Torna al tauler',
+    by: 'Per',
     cancel: 'Cancel·la',
     changesNotSaved: 'El teu document té canvis no desats. Si continues, els canvis es perdran.',
     clear: 'Clar',

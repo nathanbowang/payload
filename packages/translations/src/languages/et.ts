@@ -232,6 +232,7 @@ export const etTranslations: DefaultTranslationsObject = {
     ascending: 'Kasvav',
     automatic: 'Automaatne',
     backToDashboard: 'Tagasi töölaua juurde',
+    by: 'Autor:',
     cancel: 'Tühista',
     changesNotSaved: 'Teie muudatusi pole salvestatud. Kui lahkute praegu, kaotate oma muudatused.',
     clear: 'Selge',

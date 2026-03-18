@@ -22,6 +22,7 @@ import { CreateFirstUserView } from '../CreateFirstUser/index.js'
 import { DashboardView } from '../Dashboard/index.js'
 import { DocumentView } from '../Document/index.js'
 import { forgotPasswordBaseClass, ForgotPasswordView } from '../ForgotPassword/index.js'
+import { HierarchyView } from '../Hierarchy/index.js'
 import { ListView } from '../List/index.js'
 import { loginBaseClass, LoginView } from '../Login/index.js'
 import { LogoutInactivity, LogoutView } from '../Logout/index.js'
@@ -295,6 +296,17 @@ export const getRouteData = ({
           templateClassName = `${segmentTwo}-trash`
           templateType = 'default'
           viewType = 'trash'
+
+          viewActions.push(...(collectionConfig.admin.components?.views?.list?.actions || []))
+        } else if (segmentThree === 'hierarchy' && collectionConfig.hierarchy) {
+          // --> /collections/:collectionSlug/hierarchy
+          ViewToRender = {
+            Component: HierarchyView,
+          }
+
+          templateClassName = `${segmentTwo}-hierarchy`
+          templateType = 'default'
+          viewType = 'hierarchy'
 
           viewActions.push(...(collectionConfig.admin.components?.views?.list?.actions || []))
         } else {

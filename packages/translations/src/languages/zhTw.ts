@@ -219,6 +219,7 @@ export const zhTwTranslations: DefaultTranslationsObject = {
     ascending: '遞增',
     automatic: '自動',
     backToDashboard: '返回儀表板',
+    by: '由',
     cancel: '取消',
     changesNotSaved: '變更尚未儲存。若您現在離開，將會遺失所有變更。',
     clear: '清除',

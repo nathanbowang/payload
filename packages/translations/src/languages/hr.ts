@@ -233,6 +233,7 @@ export const hrTranslations: DefaultTranslationsObject = {
     ascending: 'Uzlazno',
     automatic: 'Automatsko',
     backToDashboard: 'Natrag na nadzornu ploču',
+    by: 'Od strane',
     cancel: 'Otkaži',
     changesNotSaved: 'Vaše promjene nisu spremljene. Ako izađete sada, izgubit ćete promjene.',
     clear: 'Jasan',

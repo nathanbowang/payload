@@ -235,6 +235,7 @@ export const bnBdTranslations: DefaultTranslationsObject = {
     ascending: 'আরোহী',
     automatic: 'স্বয়ংক্রিয়',
     backToDashboard: 'ড্যাশবোর্ডে ফিরে যান',
+    by: 'দ্বারা',
     cancel: 'বাতিল করুন',
     changesNotSaved:
       'আপনার পরিবর্তনগুলি সংরক্ষণ করা হয়নি। আপনি যদি এখন চলে যান, তাহলে আপনার পরিবর্তনগুলি হারিয়ে যাবে।',

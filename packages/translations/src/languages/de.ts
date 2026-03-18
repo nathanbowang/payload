@@ -240,6 +240,7 @@ export const deTranslations: DefaultTranslationsObject = {
     ascending: 'Aufsteigend',
     automatic: 'Automatisch',
     backToDashboard: 'Zurück zur Übersicht',
+    by: 'Von',
     cancel: 'Abbrechen',
     changesNotSaved:
       'Deine Änderungen wurden nicht gespeichert. Wenn du diese Seite verlässt, gehen deine Änderungen verloren.',

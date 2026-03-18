@@ -221,6 +221,7 @@ export const zhTranslations: DefaultTranslationsObject = {
     ascending: '升序',
     automatic: '自动',
     backToDashboard: '返回到仪表板',
+    by: '由',
     cancel: '取消',
     changesNotSaved: '您的更改尚未保存。您确定要离开吗？',
     clear: '清除',

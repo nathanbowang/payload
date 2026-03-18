@@ -233,6 +233,7 @@ export const ptTranslations: DefaultTranslationsObject = {
     ascending: 'Ascendente',
     automatic: 'Automático',
     backToDashboard: 'Voltar para Painel de Controle',
+    by: 'Por',
     cancel: 'Cancelar',
     changesNotSaved:
       'Suas alterações não foram salvas. Se você sair agora, essas alterações serão perdidas.',

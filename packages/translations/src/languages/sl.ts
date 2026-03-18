@@ -232,6 +232,7 @@ export const slTranslations: DefaultTranslationsObject = {
     ascending: 'Naraščajoče',
     automatic: 'Samodejno',
     backToDashboard: 'Nazaj na nadzorno ploščo',
+    by: 'S strani',
     cancel: 'Prekliči',
     changesNotSaved:
       'Vaše spremembe niso shranjene. Če zapustite zdaj, boste izgubili svoje spremembe.',

@@ -1,7 +1,7 @@
 'use client'
 
 import type { I18nClient } from '@payloadcms/translations'
-import type { ClientCollectionConfig } from 'payload'
+import type { ClientCollectionConfig, ViewTypes } from 'payload'
 
 import { getTranslation } from '@payloadcms/translations'
 import React from 'react'
@@ -9,7 +9,9 @@ import React from 'react'
 import type { CollectionOption } from '../../../elements/CreateDocumentButton/index.js'
 
 import { CreateDocumentButton } from '../../../elements/CreateDocumentButton/index.js'
+import { DefaultListViewTabs } from '../../../elements/DefaultListViewTabs/index.js'
 import { ListHeader } from '../../../elements/ListHeader/index.js'
+import { useConfig } from '../../../providers/Config/index.js'
 import { useHierarchy } from '../../../providers/Hierarchy/index.js'
 import { useRouteCache } from '../../../providers/RouteCache/index.js'
 import { DocumentListSelection } from '../DocumentListSelection/index.js'
@@ -30,6 +32,7 @@ export type HierarchyListHeaderProps = {
   /** Icon to display in the move drawer */
   HierarchyIcon?: React.ReactNode
   i18n: I18nClient
+  viewType?: ViewTypes
 }
 
 export function HierarchyListHeader({
@@ -42,7 +45,9 @@ export function HierarchyListHeader({
   hasCreatePermission,
   HierarchyIcon,
   i18n,
+  viewType,
 }: HierarchyListHeaderProps) {
+  const { config } = useConfig()
   const { labels } = collectionConfig
   const title = currentItemTitle || getTranslation(labels?.plural, i18n)
   const { clearRouteCache } = useRouteCache()
@@ -62,6 +67,12 @@ export function HierarchyListHeader({
           hierarchyIcon={HierarchyIcon}
           hierarchySlug={collectionConfig.slug}
           key="document-list-selection"
+        />,
+        <DefaultListViewTabs
+          collectionConfig={collectionConfig}
+          config={config}
+          key="default-list-actions"
+          viewType={viewType}
         />,
       ]}
       AfterListHeaderContent={Description}

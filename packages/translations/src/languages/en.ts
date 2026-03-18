@@ -233,6 +233,7 @@ export const enTranslations = {
     ascending: 'Ascending',
     automatic: 'Automatic',
     backToDashboard: 'Back to Dashboard',
+    by: 'By',
     cancel: 'Cancel',
     changesNotSaved:
       'Your changes have not been saved. If you leave now, you will lose your changes.',

@@ -235,6 +235,7 @@ export const jaTranslations: DefaultTranslationsObject = {
     ascending: '昇順',
     automatic: '自動設定',
     backToDashboard: 'ダッシュボードに戻る',
+    by: '〜によって',
     cancel: 'キャンセル',
     changesNotSaved: '未保存の変更があります。このまま画面を離れると内容が失われます。',
     clear: 'クリア',

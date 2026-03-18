@@ -237,6 +237,7 @@ export const roTranslations: DefaultTranslationsObject = {
     ascending: 'Ascendant',
     automatic: 'Automat',
     backToDashboard: 'Înapoi la panoul de bord',
+    by: 'De',
     cancel: 'Anulați',
     changesNotSaved:
       'Modificările dvs. nu au fost salvate. Dacă plecați acum, vă veți pierde modificările.',

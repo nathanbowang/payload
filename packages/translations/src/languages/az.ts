@@ -234,6 +234,7 @@ export const azTranslations: DefaultTranslationsObject = {
     ascending: 'Artan',
     automatic: 'Avtomatik',
     backToDashboard: 'Panelə qayıdın',
+    by: 'Tərəfindən',
     cancel: 'Ləğv et',
     changesNotSaved:
       'Dəyişiklikləriniz saxlanılmayıb. İndi çıxsanız, dəyişikliklərinizi itirəcəksiniz.',

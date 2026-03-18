@@ -362,10 +362,11 @@ export const renderListView = async (
     }
   }
 
-  // Fetch hierarchy data for hierarchy collections
+  // Fetch hierarchy data only for hierarchy view
   let HierarchyIcon: React.ReactNode | undefined
+  const isHierarchyView = viewType === 'hierarchy'
 
-  if (isHierarchyCollection) {
+  if (isHierarchyCollection && isHierarchyView) {
     // Extract typeFilter from searchParams (comma-separated list of collection slugs)
     const typeFilterParam = searchParams?.typeFilter
     const typeFilter =
@@ -488,7 +489,7 @@ export const renderListView = async (
       viewType,
     } satisfies ListViewClientProps,
     Component: ComponentOverride ?? collectionConfig?.admin?.components?.views?.list?.Component,
-    Fallback: isHierarchyCollection ? HierarchyListView : DefaultListView,
+    Fallback: viewType === 'hierarchy' ? HierarchyListView : DefaultListView,
     importMap: payload.importMap,
     serverProps,
   })
@@ -497,7 +498,7 @@ export const renderListView = async (
     List: (
       <Fragment>
         <HydrateAuthProvider permissions={permissions} />
-        {isHierarchyCollection ? (
+        {isHierarchyView ? (
           <Fragment>
             <HydrateHierarchyProvider
               allowedCollections={hierarchyData?.allowedCollections}

@@ -227,6 +227,7 @@ export const faTranslations: DefaultTranslationsObject = {
     ascending: 'صعودی',
     automatic: 'خودکار',
     backToDashboard: 'بازگشت به داشبورد',
+    by: 'توسط',
     cancel: 'انصراف',
     changesNotSaved:
       'تغییرات شما ذخیره نشده‌اند. در صورت خروج از این صفحه، این تغییرات از بین خواهند رفت.',

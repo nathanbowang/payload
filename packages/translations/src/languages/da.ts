@@ -232,6 +232,7 @@ export const daTranslations: DefaultTranslationsObject = {
     ascending: 'Stigende',
     automatic: 'Automatisk',
     backToDashboard: 'Tilbage til dashboard',
+    by: 'Af',
     cancel: 'Anuller',
     changesNotSaved:
       'Dine ændringer er ikke blevet gemt. Hvis du forlader siden, vil din ændringer gå tabt.',

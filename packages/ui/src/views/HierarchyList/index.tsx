@@ -40,6 +40,7 @@ export function HierarchyListView(props: ListViewClientProps) {
     hasCreatePermission: hasCreatePermissionFromProps,
     hierarchyData,
     HierarchyIcon,
+    viewType,
   } = props
 
   const router = useRouter()
@@ -347,6 +348,7 @@ export function HierarchyListView(props: ListViewClientProps) {
               hasCreatePermission={hasCreatePermission}
               HierarchyIcon={HierarchyIcon}
               i18n={i18n}
+              viewType={viewType}
             />
 
             <div className={`${baseClass}__controls`}>

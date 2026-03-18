@@ -235,6 +235,7 @@ export const myTranslations: DefaultTranslationsObject = {
     ascending: 'တက်နေသည်',
     automatic: 'အော်တို',
     backToDashboard: 'ပင်မစာမျက်နှာသို့ ပြန်သွားမည်။',
+    by: 'ဖြင့်',
     cancel: 'မလုပ်တော့ပါ။',
     changesNotSaved:
       'သင်၏ပြောင်းလဲမှုများကို မသိမ်းဆည်းရသေးပါ။ ယခု စာမျက်နှာက ထွက်လိုက်ပါက သင်၏ပြောင်းလဲမှုများ အကုန် ဆုံးရှုံးသွားပါမည်။ အကုန်နော်။',

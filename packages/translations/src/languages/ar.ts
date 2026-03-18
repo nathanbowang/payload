@@ -226,6 +226,7 @@ export const arTranslations: DefaultTranslationsObject = {
     ascending: 'تصاعدي',
     automatic: 'تلقائي',
     backToDashboard: 'العودة للوحة التّحكّم',
+    by: 'بواسطة',
     cancel: 'إلغاء',
     changesNotSaved: 'لم يتمّ حفظ التّغييرات. إن غادرت الآن ، ستفقد تغييراتك.',
     clear: 'واضح',

@@ -231,6 +231,7 @@ export const koTranslations: DefaultTranslationsObject = {
     ascending: '오름차순',
     automatic: '자동 설정',
     backToDashboard: '대시보드로 돌아가기',
+    by: '작성자',
     cancel: '취소',
     changesNotSaved: '변경 사항이 저장되지 않았습니다. 지금 떠나면 변경 사항을 잃게 됩니다.',
     clear:

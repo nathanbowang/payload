@@ -234,6 +234,7 @@ export const idTranslations: DefaultTranslationsObject = {
     ascending: 'Naik',
     automatic: 'Otomatis',
     backToDashboard: 'Kembali ke Dasbor',
+    by: 'Oleh',
     cancel: 'Batal',
     changesNotSaved:
       'Perubahan Anda belum disimpan. Jika Anda pergi sekarang, Anda akan kehilangan perubahan Anda.',

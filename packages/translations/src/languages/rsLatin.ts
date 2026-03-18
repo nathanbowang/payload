@@ -234,6 +234,7 @@ export const rsLatinTranslations: DefaultTranslationsObject = {
     ascending: 'Uzlazno',
     automatic: 'Automatsko',
     backToDashboard: 'Nazad na kontrolni panel',
+    by: 'Od strane',
     cancel: 'Otkaži',
     changesNotSaved: 'Vaše promene nisu sačuvane. Ako izađete sada, izgubićete promene.',
     clear: 'Jasno',

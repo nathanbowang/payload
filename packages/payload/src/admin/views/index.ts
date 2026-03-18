@@ -91,6 +91,7 @@ export type ViewTypes =
   | 'createFirstUser'
   | 'dashboard'
   | 'document'
+  | 'hierarchy'
   | 'list'
   | 'reset'
   | 'trash'

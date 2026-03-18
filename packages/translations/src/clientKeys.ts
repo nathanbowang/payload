@@ -179,6 +179,7 @@ export const clientTranslationKeys = createClientTranslationKeys([
   'general:ascending',
   'general:automatic',
   'general:backToDashboard',
+  'general:by',
   'general:cancel',
   'general:changesNotSaved',
   'general:close',

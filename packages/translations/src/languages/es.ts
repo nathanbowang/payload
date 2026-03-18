@@ -237,6 +237,7 @@ export const esTranslations: DefaultTranslationsObject = {
     ascending: 'Ascendente',
     automatic: 'Automático',
     backToDashboard: 'Volver al Panel de Control',
+    by: 'Por',
     cancel: 'Cancelar',
     changesNotSaved:
       'Tus cambios no han sido guardados. Si te sales ahora, se perderán tus cambios.',

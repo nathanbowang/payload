@@ -233,6 +233,7 @@ export const nbTranslations: DefaultTranslationsObject = {
     ascending: 'Stigende',
     automatic: 'Automatisk',
     backToDashboard: 'Tilbake til kontrollpanel',
+    by: 'Av',
     cancel: 'Avbryt',
     changesNotSaved:
       'Endringene dine er ikke lagret. Hvis du forlater nå, vil du miste endringene dine.',

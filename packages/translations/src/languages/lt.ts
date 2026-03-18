@@ -235,6 +235,7 @@ export const ltTranslations: DefaultTranslationsObject = {
     ascending: 'Kylantis',
     automatic: 'Automatinis',
     backToDashboard: 'Atgal į informacinę skydelį',
+    by: 'Iki',
     cancel: 'Atšaukti',
     changesNotSaved:
       'Jūsų pakeitimai nebuvo išsaugoti. Jei dabar išeisite, prarasite savo pakeitimus.',

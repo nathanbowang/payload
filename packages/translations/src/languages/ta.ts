@@ -231,6 +231,7 @@ export const taTranslations: DefaultTranslationsObject = {
     ascending: 'ஏறுவரிசை',
     automatic: 'தானியங்கி',
     backToDashboard: 'கட்டுப்பாட்டு பலகைக்கு திரும்பவும்',
+    by: 'மூலம்',
     cancel: 'ரத்து செய்',
     changesNotSaved: 'உங்கள் மாற்றங்கள் சேமிக்கப்படவில்லை. இப்போது வெளியேறினால், அவை இழக்கப்படும்.',
     clear: 'அழிக்கவும்',

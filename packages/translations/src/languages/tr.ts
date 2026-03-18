@@ -235,6 +235,7 @@ export const trTranslations: DefaultTranslationsObject = {
     ascending: 'artan',
     automatic: 'Otomatik',
     backToDashboard: 'Anasayfaya geri dön',
+    by: 'Tarafından',
     cancel: 'İptal',
     changesNotSaved:
       'Değişiklikleriniz henüz kaydedilmedi. Eğer bu sayfayı terk ederseniz değişiklikleri kaybedeceksiniz.',

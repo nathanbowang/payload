@@ -230,6 +230,7 @@ export const hyTranslations: DefaultTranslationsObject = {
     ascending: 'Աճող',
     automatic: 'Ավտոմատ',
     backToDashboard: 'Վերադառնալ վահանակ',
+    by: 'Միջոցով',
     cancel: 'Չեղարկել',
     changesNotSaved:
       'Ձեր փոփոխությունները չեն պահպանվել։ Եթե հիմա հեռանաք, կկորցնեք չպահպանված փոփոխությունները։',

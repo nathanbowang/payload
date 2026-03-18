@@ -233,6 +233,7 @@ export const lvTranslations: DefaultTranslationsObject = {
     ascending: 'Augošā secībā',
     automatic: 'Automātiski',
     backToDashboard: 'Atpakaļ uz paneli',
+    by: 'Autors',
     cancel: 'Atcelt',
     changesNotSaved: 'Jūsu izmaiņas nav saglabātas. Ja tagad pametīsiet, izmaiņas tiks zaudētas.',
     clear:

@@ -232,6 +232,7 @@ export const bgTranslations: DefaultTranslationsObject = {
     ascending: 'Възходящ',
     automatic: 'Автоматична',
     backToDashboard: 'Обратно към таблото',
+    by: 'От',
     cancel: 'Отмени',
     changesNotSaved: 'Промените ти не са запазени. Ако напуснеш сега, ще ги загубиш.',
     clear: 'Ясно',

@@ -233,6 +233,7 @@ export const ukTranslations: DefaultTranslationsObject = {
     ascending: 'В порядку зростання',
     automatic: 'Автоматично',
     backToDashboard: 'Повернутись до головної сторінки',
+    by: 'Від',
     cancel: 'Скасувати',
     changesNotSaved: 'Ваши зміни не були збережені. Якщо ви вийдете зараз, то втратите свої зміни.',
     clear: 'Очистити',

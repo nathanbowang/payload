@@ -234,6 +234,7 @@ export const ruTranslations: DefaultTranslationsObject = {
     ascending: 'Восходящий',
     automatic: 'Автоматически',
     backToDashboard: 'Назад к Панели',
+    by: 'По',
     cancel: 'Отмена',
     changesNotSaved:
       'Ваши изменения не были сохранены. Если вы сейчас уйдете, то потеряете свои изменения.',

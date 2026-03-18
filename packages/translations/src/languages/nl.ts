@@ -239,6 +239,7 @@ export const nlTranslations: DefaultTranslationsObject = {
     ascending: 'Oplopend',
     automatic: 'Automatisch',
     backToDashboard: 'Terug naar dashboard',
+    by: 'Door',
     cancel: 'Annuleren',
     changesNotSaved:
       'Uw wijzigingen zijn niet bewaard. Als u weggaat zullen de wijzigingen verloren gaan.',

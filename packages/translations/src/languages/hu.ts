@@ -236,6 +236,7 @@ export const huTranslations: DefaultTranslationsObject = {
     ascending: 'Növekvő',
     automatic: 'Automatikus',
     backToDashboard: 'Vissza az irányítópultra',
+    by: 'Által',
     cancel: 'Mégsem',
     changesNotSaved:
       'A módosítások nem lettek mentve. Ha most távozik, elveszíti a változtatásokat.',

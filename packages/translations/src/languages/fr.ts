@@ -242,6 +242,7 @@ export const frTranslations: DefaultTranslationsObject = {
     ascending: 'Ascendant',
     automatic: 'Automatique',
     backToDashboard: 'Retour au tableau de bord',
+    by: 'Par',
     cancel: 'Annuler',
     changesNotSaved:
       'Vos modifications n’ont pas été enregistrées. Vous perdrez vos modifications si vous quittez maintenant.',

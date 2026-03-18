@@ -232,6 +232,7 @@ export const isTranslations: DefaultTranslationsObject = {
     ascending: 'Hækkandi',
     automatic: 'Sjálfvirkt',
     backToDashboard: 'Aftur í stjórnborð',
+    by: 'Eftir',
     cancel: 'Hætta við',
     changesNotSaved:
       'Breytingarnar þínar hafa ekki verið vistaðar. Ef þú ferð núna muntu missa breytingarnar þínar.',

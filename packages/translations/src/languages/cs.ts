@@ -232,6 +232,7 @@ export const csTranslations: DefaultTranslationsObject = {
     ascending: 'Vzestupně',
     automatic: 'Automatický',
     backToDashboard: 'Zpět na nástěnku',
+    by: 'Od',
     cancel: 'Zrušit',
     changesNotSaved: 'Vaše změny nebyly uloženy. Pokud teď odejdete, ztratíte své změny.',
     clear: 'Jasný',

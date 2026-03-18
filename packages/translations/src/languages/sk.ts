@@ -235,6 +235,7 @@ export const skTranslations: DefaultTranslationsObject = {
     ascending: 'Vzostupne',
     automatic: 'Automatický',
     backToDashboard: 'Späť na nástenku',
+    by: 'Autor',
     cancel: 'Zrušiť',
     changesNotSaved: 'Vaše zmeny neboli uložené. Ak teraz odídete, stratíte svoje zmeny.',
     clear: 'Jasný',

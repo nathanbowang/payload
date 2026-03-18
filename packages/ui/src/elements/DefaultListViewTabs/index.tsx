@@ -29,8 +29,9 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
   const { i18n, t } = useTranslation()
   const router = useRouter()
   const isTrashEnabled = collectionConfig.trash
+  const isHierarchyEnabled = Boolean(collectionConfig.hierarchy)
 
-  if (!isTrashEnabled) {
+  if (!isTrashEnabled && !isHierarchyEnabled) {
     return null
   }
 
@@ -41,6 +42,9 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
 
     let path: `/${string}` = `/collections/${collectionConfig.slug}`
     switch (newViewType) {
+      case 'hierarchy':
+        path = `/collections/${collectionConfig.slug}/hierarchy`
+        break
       case 'trash':
         path = `/collections/${collectionConfig.slug}/trash`
         break
@@ -54,7 +58,8 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
     router.push(url)
   }
 
-  const allButtonLabel = `${t('general:all')} ${getTranslation(collectionConfig?.labels?.plural, i18n)}`
+  const collectionLabel = getTranslation(collectionConfig?.labels?.plural, i18n)
+  const allButtonLabel = `${t('general:all')} ${collectionLabel}`
   const allButtonId = allButtonLabel.toLowerCase().replace(/\s+/g, '-')
 
   return (
@@ -69,8 +74,26 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
         id={allButtonId}
         onClick={() => handleViewChange('list')}
       >
-        {t('general:all')} {getTranslation(collectionConfig?.labels?.plural, i18n)}
+        {t('general:all')} {collectionLabel}
       </Button>
+
+      {isHierarchyEnabled && (
+        <Button
+          buttonStyle="tab"
+          className={[
+            `${baseClass}__button`,
+            viewType === 'hierarchy' && `${baseClass}__button--active`,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          disabled={viewType === 'hierarchy'}
+          el="button"
+          id="hierarchy-view-pill"
+          onClick={() => handleViewChange('hierarchy')}
+        >
+          {t('general:by')} {getTranslation(collectionConfig?.labels?.singular, i18n)}
+        </Button>
+      )}
 
       {isTrashEnabled && (
         <Button

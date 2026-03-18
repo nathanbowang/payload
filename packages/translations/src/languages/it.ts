@@ -237,6 +237,7 @@ export const itTranslations: DefaultTranslationsObject = {
     ascending: 'Ascendente',
     automatic: 'Automatico',
     backToDashboard: 'Torna alla Dashboard',
+    by: 'Da',
     cancel: 'Cancella',
     changesNotSaved: 'Le tue modifiche non sono state salvate. Se esci ora, verranno perse.',
     clear: 'Chiara',

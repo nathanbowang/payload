@@ -233,6 +233,7 @@ export const viTranslations: DefaultTranslationsObject = {
     ascending: 'Tăng dần',
     automatic: 'Tự động',
     backToDashboard: 'Quay lại bảng điều khiển',
+    by: 'Bởi',
     cancel: 'Hủy',
     changesNotSaved: 'Thay đổi chưa được lưu lại. Bạn sẽ mất bản chỉnh sửa nếu thoát bây giờ.',
     clear: 'Xóa',

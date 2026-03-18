@@ -231,6 +231,7 @@ export const plTranslations: DefaultTranslationsObject = {
     ascending: 'Rosnąco',
     automatic: 'Automatyczny',
     backToDashboard: 'Powrót do panelu',
+    by: 'Przez',
     cancel: 'Anuluj',
     changesNotSaved:
       'Twoje zmiany nie zostały zapisane. Jeśli teraz wyjdziesz, stracisz swoje zmiany.',

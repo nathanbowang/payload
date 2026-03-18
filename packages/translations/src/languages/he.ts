@@ -224,6 +224,7 @@ export const heTranslations: DefaultTranslationsObject = {
     ascending: 'בסדר עולה',
     automatic: 'אוטומטי',
     backToDashboard: 'חזרה ללוח המחוונים',
+    by: 'על ידי',
     cancel: 'ביטול',
     changesNotSaved: 'השינויים שלך לא נשמרו. אם תצא כעת, תאבד את השינויים שלך.',
     clear:
