@@ -254,6 +254,8 @@ node_modules/.bin/payload migrate && HOSTNAME="0.0.0.0" node server.js
   applies to Postgres deployments.
 </Banner>
 
+For long-running containers where you prefer migrations to run automatically at server startup rather than as a separate CI step, see [Running migrations in production](/docs/database/migrations#running-migrations-in-production).
+
 ## Docker Compose
 
 Here is an example of a docker-compose.yml file that can be used for development
