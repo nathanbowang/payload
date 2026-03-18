@@ -65,7 +65,8 @@ export const hierarchyCollectionAfterRead =
 
     // Determine if paths should be computed
     const shouldComputePaths =
-      context?.computeHierarchyPaths === true || // Explicit flag
+      context?.computeHierarchyPaths === true || // Explicit flag in context
+      context?.computeHierarchyPathsViaSelect === true || // Flag from beforeOperation (select-triggered)
       req.query?.computeHierarchyPaths === 'true' || // Query parameter
       isPathFieldSelected(req, slugPathFieldName, titlePathFieldName) // Field selection detection
 
@@ -99,6 +100,14 @@ export const hierarchyCollectionAfterRead =
       // If path computation fails, log but don't break the document read
       // eslint-disable-next-line no-console
       console.error(`Failed to compute hierarchy paths for document ${doc.id}:`, error)
+    }
+
+    // Strip auto-added fields that were only included for path computation
+    const autoAddedFields = context?.hierarchyAutoSelectedFields as string[] | undefined
+    if (autoAddedFields && autoAddedFields.length > 0) {
+      for (const fieldName of autoAddedFields) {
+        delete doc[fieldName]
+      }
     }
 
     return doc

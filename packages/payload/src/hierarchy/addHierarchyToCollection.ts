@@ -3,20 +3,26 @@ import type { CollectionConfig } from '../collections/config/types.js'
 import { hierarchyCollectionAfterRead } from './hooks/collectionAfterRead.js'
 import { hierarchyCollectionBeforeChange } from './hooks/collectionBeforeChange.js'
 import { hierarchyCollectionBeforeDelete } from './hooks/collectionBeforeDelete.js'
-import { findUseAsTitleField } from './utils/findUseAsTitle.js'
+import { hierarchyCollectionBeforeOperation } from './hooks/collectionBeforeOperation.js'
+import { findFieldByName, findUseAsTitleField } from './utils/findUseAsTitle.js'
 
 export const addHierarchyToCollection = ({
   collectionConfig,
   parentFieldName,
+  slugFieldName,
   slugPathFieldName,
   titlePathFieldName,
 }: {
   collectionConfig: CollectionConfig
   parentFieldName: string
+  slugFieldName?: string
   slugPathFieldName: string
   titlePathFieldName: string
 }) => {
   const { titleFieldName } = findUseAsTitleField(collectionConfig)
+  // Verify slug field exists if configured
+  const slugFieldInfo = slugFieldName ? findFieldByName(collectionConfig, slugFieldName) : undefined
+  const validatedSlugFieldName = slugFieldInfo ? slugFieldName : undefined
 
   // Add virtual path fields (computed in afterRead)
   collectionConfig.fields.push(
@@ -66,6 +72,16 @@ export const addHierarchyToCollection = ({
     beforeDelete: [
       ...(collectionConfig.hooks?.beforeDelete || []),
       hierarchyCollectionBeforeDelete({ parentFieldName }),
+    ],
+    beforeOperation: [
+      ...(collectionConfig.hooks?.beforeOperation || []),
+      hierarchyCollectionBeforeOperation({
+        parentFieldName,
+        slugFieldName: validatedSlugFieldName,
+        slugPathFieldName,
+        titleFieldName,
+        titlePathFieldName,
+      }),
     ],
   }
 }

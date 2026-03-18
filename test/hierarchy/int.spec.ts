@@ -1361,4 +1361,153 @@ describe('Hierarchy', () => {
       expect(page._h_titlePath).toBe('Contact Us')
     })
   })
+
+  describe('Select-based Path Computation', () => {
+    const createdOrgIds: (number | string)[] = []
+
+    afterEach(async () => {
+      // Delete in reverse order (children before parents)
+      for (const id of [...createdOrgIds].reverse()) {
+        try {
+          await payload.delete({ collection: 'organizations', id })
+        } catch {
+          // Ignore if already deleted
+        }
+      }
+      createdOrgIds.length = 0
+    })
+
+    it('should compute full paths when selecting path fields', async () => {
+      // Create parent
+      const parent = await payload.create({
+        collection: 'organizations',
+        data: { parent: null, title: 'Parent Org' },
+      })
+      createdOrgIds.push(parent.id)
+
+      // Create child
+      const child = await payload.create({
+        collection: 'organizations',
+        data: { parent: parent.id, title: 'Child Org' },
+      })
+      createdOrgIds.push(child.id)
+
+      // Fetch with select including path fields - should compute full paths
+      const result = await payload.findByID({
+        id: child.id,
+        collection: 'organizations',
+        select: {
+          _h_slugPath: true,
+          _h_titlePath: true,
+        },
+      })
+
+      // Should have full paths (not flat paths)
+      expect(result._h_slugPath).toBe('parent-org/child-org')
+      expect(result._h_titlePath).toBe('Parent Org/Child Org')
+    })
+
+    it('should not expose auto-added fields in response', async () => {
+      // Create parent
+      const parent = await payload.create({
+        collection: 'organizations',
+        data: { parent: null, title: 'Hidden Parent' },
+      })
+      createdOrgIds.push(parent.id)
+
+      // Create child
+      const child = await payload.create({
+        collection: 'organizations',
+        data: { parent: parent.id, title: 'Hidden Child' },
+      })
+      createdOrgIds.push(child.id)
+
+      // Fetch with select only including path fields (not parent or title)
+      const result = await payload.findByID({
+        id: child.id,
+        collection: 'organizations',
+        select: {
+          _h_slugPath: true,
+          _h_titlePath: true,
+        },
+      })
+
+      // Paths should be computed correctly
+      expect(result._h_slugPath).toBe('hidden-parent/hidden-child')
+
+      // Parent and title fields should NOT be in response (they were auto-added for computation only)
+      expect(result).not.toHaveProperty('parent')
+      expect(result).not.toHaveProperty('title')
+    })
+
+    it('should keep explicitly selected fields in response', async () => {
+      // Create parent
+      const parent = await payload.create({
+        collection: 'organizations',
+        data: { parent: null, title: 'Explicit Parent' },
+      })
+      createdOrgIds.push(parent.id)
+
+      // Create child
+      const child = await payload.create({
+        collection: 'organizations',
+        data: { parent: parent.id, title: 'Explicit Child' },
+      })
+      createdOrgIds.push(child.id)
+
+      // Fetch with select including both path fields AND title (explicitly requested)
+      const result = await payload.findByID({
+        id: child.id,
+        collection: 'organizations',
+        select: {
+          _h_slugPath: true,
+          title: true,
+        },
+      })
+
+      // Paths should be computed correctly
+      expect(result._h_slugPath).toBe('explicit-parent/explicit-child')
+
+      // Title should be present because it was explicitly selected
+      expect(result.title).toBe('Explicit Child')
+
+      // Parent was not explicitly selected, so should not be present
+      expect(result).not.toHaveProperty('parent')
+    })
+
+    it('should work with deeply nested hierarchy using select', async () => {
+      // Create 3-level hierarchy
+      const level1 = await payload.create({
+        collection: 'organizations',
+        data: { parent: null, title: 'Level 1' },
+      })
+      createdOrgIds.push(level1.id)
+
+      const level2 = await payload.create({
+        collection: 'organizations',
+        data: { parent: level1.id, title: 'Level 2' },
+      })
+      createdOrgIds.push(level2.id)
+
+      const level3 = await payload.create({
+        collection: 'organizations',
+        data: { parent: level2.id, title: 'Level 3' },
+      })
+      createdOrgIds.push(level3.id)
+
+      // Fetch deepest level with select
+      const result = await payload.findByID({
+        id: level3.id,
+        collection: 'organizations',
+        select: {
+          _h_slugPath: true,
+          _h_titlePath: true,
+        },
+      })
+
+      // Should have full 3-level path
+      expect(result._h_slugPath).toBe('level-1/level-2/level-3')
+      expect(result._h_titlePath).toBe('Level 1/Level 2/Level 3')
+    })
+  })
 })

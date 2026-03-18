@@ -104,10 +104,13 @@ export const sanitizeHierarchyCollection = (
   const treeLimit = collectionConfig.hierarchy.admin?.treeLimit ?? DEFAULT_HIERARCHY_TREE_LIMIT
   const iconComponent = collectionConfig.hierarchy.admin?.components?.Icon
 
+  const slugField = collectionConfig.hierarchy.slugField
+
   // Apply hierarchy to collection (adds fields and hooks)
   addHierarchyToCollection({
     collectionConfig,
     parentFieldName: collectionConfig.hierarchy.parentFieldName,
+    slugFieldName: slugField,
     slugPathFieldName,
     titlePathFieldName,
   })
@@ -135,8 +138,6 @@ export const sanitizeHierarchyCollection = (
   // Set sanitized hierarchy config (cast needed as we're transitioning from HierarchyConfig to SanitizedHierarchyConfig)
   const useHeaderButton = collectionConfig.hierarchy.admin?.useHeaderButton ?? false
   const injectSidebarTab = collectionConfig.hierarchy.admin?.injectSidebarTab ?? true
-
-  const slugField = collectionConfig.hierarchy.slugField
 
   ;(collectionConfig as unknown as { hierarchy: SanitizedHierarchyConfig }).hierarchy = {
     admin: {
