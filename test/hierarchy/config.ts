@@ -12,6 +12,60 @@ import { buildConfigWithDefaults } from '../buildConfigWithDefaults.js'
 import { devUser } from '../credentials.js'
 import { seed } from './seed.js'
 
+// Categories collection with sidebar tab disabled (should appear in nav, not as tab)
+export const Categories: CollectionConfig = {
+  slug: 'categories',
+  admin: {
+    useAsTitle: 'name',
+  },
+  fields: [
+    {
+      name: 'name',
+      type: 'text',
+      required: true,
+    },
+  ],
+  hierarchy: {
+    admin: {
+      components: {
+        Icon: {
+          clientProps: { color: '#39FF14' }, // Neon Green
+          path: '/components/ColorCircleIcon.tsx#ColorCircleIcon',
+        },
+      },
+      injectSidebarTab: false,
+    },
+    parentFieldName: 'parent',
+  },
+}
+
+// Regions collection with explicit group (should appear in BOTH nav and as sidebar tab)
+export const Regions: CollectionConfig = {
+  slug: 'regions',
+  admin: {
+    group: 'Geography',
+    useAsTitle: 'name',
+  },
+  fields: [
+    {
+      name: 'name',
+      type: 'text',
+      required: true,
+    },
+  ],
+  hierarchy: {
+    admin: {
+      components: {
+        Icon: {
+          clientProps: { color: '#ff0077' }, // Neon Cyan
+          path: '/components/ColorCircleIcon.tsx#ColorCircleIcon',
+        },
+      },
+    },
+    parentFieldName: 'parent',
+  },
+}
+
 // Departments collection with custom field names
 export const Departments: CollectionConfig = {
   slug: 'departments',
@@ -29,7 +83,7 @@ export const Departments: CollectionConfig = {
     admin: {
       components: {
         Icon: {
-          clientProps: { color: '#E67E22' }, // Orange
+          clientProps: { color: '#FF6600' }, // Neon Orange
           path: '/components/ColorCircleIcon.tsx#ColorCircleIcon',
         },
       },
@@ -62,7 +116,7 @@ export const Organizations: CollectionConfig = {
     admin: {
       components: {
         Icon: {
-          clientProps: { color: '#3498DB' }, // Light Blue
+          clientProps: { color: '#00BFFF' }, // Neon Blue
           path: '/components/ColorCircleIcon.tsx#ColorCircleIcon',
         },
       },
@@ -89,7 +143,7 @@ export const Folders = createFoldersCollection({
     admin: {
       components: {
         Icon: {
-          clientProps: { color: '#9B59B6' }, // Purple
+          clientProps: { color: '#BF00FF' }, // Neon Purple
           path: '/components/ColorCircleIcon.tsx#ColorCircleIcon',
         },
       },
@@ -123,7 +177,7 @@ export const Products: CollectionConfig = {
     admin: {
       components: {
         Icon: {
-          clientProps: { color: '#F1C40F' }, // Gold
+          clientProps: { color: '#FFFF00' }, // Neon Yellow
           path: '/components/ColorCircleIcon.tsx#ColorCircleIcon',
         },
       },
@@ -141,7 +195,7 @@ export default buildConfigWithDefaults({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Departments, Folders, Organizations, Products],
+  collections: [Categories, Departments, Folders, Organizations, Products, Regions],
   debug: true,
   localization: {
     defaultLocale: 'en',

@@ -177,6 +177,14 @@ export const resolveHierarchyCollections = (config: Config): void => {
         hierarchyCollection,
         hierarchyConfig,
       })
+
+      // Hide from nav when sidebar tab is injected (unless user explicitly set group)
+      if (hierarchyCollection.admin?.group === undefined) {
+        hierarchyCollection.admin = {
+          ...hierarchyCollection.admin,
+          group: false,
+        }
+      }
     }
   }
 }

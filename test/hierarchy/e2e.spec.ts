@@ -123,6 +123,55 @@ test.describe('Hierarchy Sidebar', () => {
     })
   })
 
+  test.describe('Sidebar Tab Visibility', () => {
+    test('should not show tab for collections with injectSidebarTab: false', async () => {
+      await page.goto(organizationsURL.list)
+      await openNav(page)
+
+      // These collections should have tabs (default injectSidebarTab: true)
+      await expect(page.getByRole('tab', { name: 'Organizations' })).toBeVisible()
+      await expect(page.getByRole('tab', { name: 'Departments' })).toBeVisible()
+      await expect(page.getByRole('tab', { name: 'Folders' })).toBeVisible()
+      await expect(page.getByRole('tab', { name: 'Products' })).toBeVisible()
+
+      // Categories has injectSidebarTab: false, should NOT have a tab
+      await expect(page.getByRole('tab', { name: 'Categories' })).toBeHidden()
+    })
+
+    test('should show collection with injectSidebarTab: false in nav', async () => {
+      await page.goto(organizationsURL.list)
+      await openNav(page)
+
+      // Categories should appear in the default nav (injectSidebarTab: false means no sidebar tab, so appears in nav)
+      const navTab = page.getByRole('tab', { name: 'Collections' })
+      await navTab.click()
+
+      // Should see Categories in the collections list (it has injectSidebarTab: false)
+      await expect(page.getByRole('link', { name: 'Categories' })).toBeVisible()
+
+      // Collections with sidebar tabs should NOT appear in nav (auto-hidden)
+      await expect(page.getByRole('link', { name: 'Organizations' })).toBeHidden()
+      await expect(page.getByRole('link', { name: 'Departments' })).toBeHidden()
+      await expect(page.getByRole('link', { name: 'Products' })).toBeHidden()
+      await expect(page.getByRole('link', { name: 'Folders' })).toBeHidden()
+    })
+
+    test('should show collection in both nav and sidebar tab when group is explicitly set', async () => {
+      await page.goto(organizationsURL.list)
+      await openNav(page)
+
+      // Regions has explicit group: 'Geography', so it appears in nav
+      const navTab = page.getByRole('tab', { name: 'Collections' })
+      await navTab.click()
+
+      // Should see Regions in the Geography group
+      await expect(page.getByRole('link', { name: 'Regions' })).toBeVisible()
+
+      // Regions should ALSO have a sidebar tab (injectSidebarTab defaults to true)
+      await expect(page.getByRole('tab', { name: 'Regions' })).toBeVisible()
+    })
+  })
+
   test.describe('Tab Isolation', () => {
     test('should maintain separate expanded state per tab', async () => {
       await page.goto(organizationsURL.list)
