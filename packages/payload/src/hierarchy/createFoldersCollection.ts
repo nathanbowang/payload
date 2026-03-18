@@ -36,8 +36,10 @@ export type CreateFoldersCollectionOptions = {
  * - `hierarchy.allowHasMany: false` (enforced, folders are single-select)
  * - Default folder icon component
  * - Required `useAsTitle` to ensure folders display meaningful names
- * - `admin.group: false` by default to hide from collections list
+ * - `admin.group: false` by default when sidebar tab is enabled (default)
  *   (folder collections are accessed via their dedicated sidebar tab)
+ * - When `hierarchy.admin.injectSidebarTab: false`, group defaults to undefined
+ *   so the collection appears in the nav
  *
  * @example
  * import { createFoldersCollection, createFolderField } from 'payload'
@@ -66,6 +68,11 @@ export function createFoldersCollection(options: CreateFoldersCollectionOptions)
   // This enables the joinField to work with both subfolders and related documents
   const parentFieldName = hierarchyOverrides?.parentFieldName ?? getHierarchyFieldName(slug)
 
+  // Only hide from nav (group: false) when sidebar tab is enabled (default)
+  // If user disables sidebar tab, they need the collection visible in nav
+  const sidebarTabEnabled = hierarchyOverrides?.admin?.injectSidebarTab !== false
+  const defaultGroup = sidebarTabEnabled ? false : undefined
+
   return {
     labels: {
       plural: 'Folders',
@@ -73,7 +80,7 @@ export function createFoldersCollection(options: CreateFoldersCollectionOptions)
     },
     ...rest,
     admin: {
-      group: false,
+      group: defaultGroup,
       ...adminOverrides,
       useAsTitle,
     },

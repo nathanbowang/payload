@@ -30,6 +30,11 @@ export type HierarchyConfig = {
       Icon?: PayloadComponent
     }
     /**
+     * Whether to inject a sidebar tab for this hierarchy collection
+     * @default true
+     */
+    injectSidebarTab?: boolean
+    /**
      * Maximum number of items to load in tree views
      * @default 100
      */
@@ -100,6 +105,7 @@ export type SanitizedHierarchyConfig = {
     components: {
       Icon: PayloadComponent
     }
+    injectSidebarTab: boolean
     treeLimit: number
     useHeaderButton: boolean
   }

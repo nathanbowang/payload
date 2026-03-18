@@ -170,12 +170,14 @@ export const resolveHierarchyCollections = (config: Config): void => {
       })
     }
 
-    // Add sidebar tab for this hierarchy collection
-    injectSidebarTab({
-      config,
-      hierarchyCollection,
-      hierarchyConfig,
-    })
+    // Add sidebar tab for this hierarchy collection (unless explicitly disabled)
+    if (hierarchyConfig.admin.injectSidebarTab !== false) {
+      injectSidebarTab({
+        config,
+        hierarchyCollection,
+        hierarchyConfig,
+      })
+    }
   }
 }
 

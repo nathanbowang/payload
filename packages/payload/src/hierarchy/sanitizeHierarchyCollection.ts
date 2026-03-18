@@ -134,12 +134,14 @@ export const sanitizeHierarchyCollection = (
 
   // Set sanitized hierarchy config (cast needed as we're transitioning from HierarchyConfig to SanitizedHierarchyConfig)
   const useHeaderButton = collectionConfig.hierarchy.admin?.useHeaderButton ?? false
+  const injectSidebarTab = collectionConfig.hierarchy.admin?.injectSidebarTab ?? true
 
   ;(collectionConfig as unknown as { hierarchy: SanitizedHierarchyConfig }).hierarchy = {
     admin: {
       components: {
         Icon: iconComponent || '@payloadcms/ui#TagIcon',
       },
+      injectSidebarTab,
       treeLimit,
       useHeaderButton,
     },
