@@ -9,6 +9,7 @@ import { sanitizeInternalFields } from '../utilities/sanitizeInternalFields.js'
 import { getQueryDraftsSelect } from './drafts/getQueryDraftsSelect.js'
 import { enforceMaxVersions } from './enforceMaxVersions.js'
 import { saveSnapshot } from './saveSnapshot.js'
+import { updateLatestVersion } from './updateLatestVersion.js'
 
 type Args<T extends JsonObject = JsonObject> = {
   autosave?: boolean
@@ -25,89 +26,6 @@ type Args<T extends JsonObject = JsonObject> = {
   select?: SelectType
   snapshot?: any
   unpublish?: boolean
-}
-
-async function findAndUpdateLatestVersion<TData extends JsonObject>({
-  id,
-  collection,
-  global,
-  now,
-  payload,
-  req,
-  shouldUpdate,
-  versionData,
-}: {
-  collection?: SanitizedCollectionConfig
-  global?: SanitizedGlobalConfig
-  id?: number | string
-  now: string
-  payload: Payload
-  req?: PayloadRequest
-  shouldUpdate: (latestVersion: JsonObject) => boolean
-  versionData: TData
-}): Promise<{ result?: JsonObject; updated: boolean }> {
-  let docs
-  const findVersionArgs = {
-    limit: 1,
-    pagination: false,
-    req,
-    sort: '-updatedAt',
-  }
-
-  if (collection) {
-    ;({ docs } = await payload.db.findVersions<TData>({
-      ...findVersionArgs,
-      collection: collection.slug,
-      where: {
-        parent: {
-          equals: id,
-        },
-      },
-    }))
-  } else {
-    ;({ docs } = await payload.db.findGlobalVersions<TData>({
-      ...findVersionArgs,
-      global: global!.slug,
-    }))
-  }
-
-  const [latestVersion] = docs
-
-  if (!latestVersion || !shouldUpdate(latestVersion)) {
-    return { updated: false }
-  }
-
-  const updateVersionArgs = {
-    id: latestVersion.id,
-    req,
-    versionData: {
-      createdAt: new Date(latestVersion.createdAt).toISOString(),
-      latest: true,
-      parent: id,
-      updatedAt: now,
-      version: {
-        ...versionData,
-      },
-    },
-  }
-
-  let result: JsonObject | undefined
-
-  if (collection) {
-    result = await payload.db.updateVersion<TData>({
-      ...updateVersionArgs,
-      collection: collection.slug,
-      req,
-    })
-  } else {
-    result = await payload.db.updateGlobalVersion<TData>({
-      ...updateVersionArgs,
-      global: global!.slug,
-      req,
-    })
-  }
-
-  return { result, updated: true }
 }
 
 export async function saveVersion<TData extends JsonObject = JsonObject>(
@@ -136,7 +54,7 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
   unpublish,
 }: Args<TData>): Promise<JsonObject | null> {
   let result: JsonObject | undefined
-  let createNewVersion = true
+  let createdNewVersion = false
   const now = new Date().toISOString()
   const versionData: {
     _status?: 'draft'
@@ -152,43 +70,22 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
   }
 
   try {
-    if (unpublish) {
-      const overwrite = await findAndUpdateLatestVersion({
+    if (unpublish || autosave) {
+      result = await updateLatestVersion({
         id,
         collection,
         global,
         now,
         payload,
         req,
-        shouldUpdate: () => true,
+        shouldUpdate: autosave ? (v) => 'autosave' in v && v.autosave === true : undefined,
         versionData,
       })
-
-      if (overwrite.updated) {
-        createNewVersion = false
-        result = overwrite.result
-      }
     }
 
-    if (autosave && createNewVersion) {
-      const overwrite = await findAndUpdateLatestVersion({
-        id,
-        collection,
-        global,
-        now,
-        payload,
-        req,
-        shouldUpdate: (v) => 'autosave' in v && v.autosave === true,
-        versionData,
-      })
+    if (!result) {
+      createdNewVersion = true
 
-      if (overwrite.updated) {
-        createNewVersion = false
-        result = overwrite.result
-      }
-    }
-
-    if (createNewVersion) {
       const createVersionArgs = {
         autosave: Boolean(autosave),
         collectionSlug: undefined as string | undefined,
@@ -242,7 +139,7 @@ export async function saveVersion<TData extends JsonObject = JsonObject>({
 
   const max = getVersionsMax(collection || global!)
 
-  if (createNewVersion && max > 0) {
+  if (createdNewVersion && max > 0) {
     await enforceMaxVersions({
       id,
       collection,
