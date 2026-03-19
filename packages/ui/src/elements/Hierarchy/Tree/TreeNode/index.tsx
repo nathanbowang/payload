@@ -91,13 +91,6 @@ export const TreeNode = ({
     ref: nodeRef,
   })
 
-  // When focusedId points to this node, actually call .focus()
-  React.useEffect(() => {
-    if (isFocused && nodeRef.current && document.activeElement !== nodeRef.current) {
-      nodeRef.current.focus()
-    }
-  }, [isFocused])
-
   // Determine if node has children:
   // - If explicitly set in data, use that
   // - If expanded and loaded, check the actual children

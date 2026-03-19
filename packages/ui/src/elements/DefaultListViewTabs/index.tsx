@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation.js'
 import { formatAdminURL } from 'payload/shared'
 import React from 'react'
 
+import { usePreferences } from '../../providers/Preferences/index.js'
 import { useTranslation } from '../../providers/Translation/index.js'
 import { Button } from '../Button/index.js'
 import './index.scss'
@@ -27,6 +28,7 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
   viewType,
 }) => {
   const { i18n, t } = useTranslation()
+  const { setPreference } = usePreferences()
   const router = useRouter()
   const isTrashEnabled = collectionConfig.trash
   const isHierarchyEnabled = Boolean(collectionConfig.hierarchy)
@@ -35,9 +37,16 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
     return null
   }
 
-  const handleViewChange = (newViewType: ViewTypes) => {
+  const handleViewChange = async (newViewType: ViewTypes) => {
     if (onChange) {
       onChange(newViewType)
+    }
+
+    // Save preference for list vs hierarchy (not trash)
+    if (newViewType === 'list' || newViewType === 'hierarchy') {
+      await setPreference(`collection-${collectionConfig.slug}`, {
+        listViewType: newViewType,
+      })
     }
 
     let path: `/${string}` = `/collections/${collectionConfig.slug}`
@@ -74,7 +83,7 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
         id={allButtonId}
         onClick={() => handleViewChange('list')}
       >
-        {t('general:all')} {collectionLabel}
+        {`${t('general:all')} ${collectionLabel}`}
       </Button>
 
       {isHierarchyEnabled && (
@@ -91,7 +100,7 @@ export const DefaultListViewTabs: React.FC<DefaultListViewTabsProps> = ({
           id="hierarchy-view-pill"
           onClick={() => handleViewChange('hierarchy')}
         >
-          {t('general:by')} {getTranslation(collectionConfig?.labels?.singular, i18n)}
+          {`${t('general:by')} ${getTranslation(collectionConfig?.labels?.singular, i18n)}`}
         </Button>
       )}
 

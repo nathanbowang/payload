@@ -213,14 +213,25 @@ export const getRouteData = ({
         // --> /collections/:collectionSlug'
         routeParams.collection = collectionConfig.slug
 
-        // Regular list view - handles hierarchy collections via handleHierarchy when ?parent= is present
-        ViewToRender = {
-          Component: ListView,
-        }
+        if (collectionPreferences?.listViewType === 'hierarchy' && collectionConfig.hierarchy) {
+          // Render hierarchy view by default if set in preferences
+          ViewToRender = {
+            Component: HierarchyView,
+          }
 
-        templateClassName = `${segmentTwo}-list`
-        templateType = 'default'
-        viewType = 'list'
+          templateClassName = `${segmentTwo}-hierarchy`
+          templateType = 'default'
+          viewType = 'hierarchy'
+        } else {
+          // Regular list view
+          ViewToRender = {
+            Component: ListView,
+          }
+
+          templateClassName = `${segmentTwo}-list`
+          templateType = 'default'
+          viewType = 'list'
+        }
 
         viewActions.push(...(collectionConfig.admin.components?.views?.list?.actions || []))
       } else if (globalConfig) {

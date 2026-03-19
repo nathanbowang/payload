@@ -37,6 +37,7 @@ export const HierarchyCell: React.FC<HierarchyCellProps> = ({
   const [values, setValues] = useState<Value[]>([])
   const { documents, getRelationships } = useListRelationships()
   const hasRequestedRef = useRef(false)
+  const prevCellDataRef = useRef<typeof cellDataFromProps>(undefined)
   const { i18n, t } = useTranslation()
 
   const isAboveViewport = canUseDOM ? entry?.boundingClientRect?.top < window.innerHeight : false
@@ -73,6 +74,12 @@ export const HierarchyCell: React.FC<HierarchyCellProps> = ({
 
   // Fetch relationship data when visible
   useEffect(() => {
+    // Reset tracking if data changed
+    if (prevCellDataRef.current !== cellDataFromProps) {
+      prevCellDataRef.current = cellDataFromProps
+      hasRequestedRef.current = false
+    }
+
     if (
       (cellDataFromProps || typeof cellDataFromProps === 'number') &&
       isAboveViewport &&
@@ -101,11 +108,6 @@ export const HierarchyCell: React.FC<HierarchyCellProps> = ({
       setValues(formattedValues)
     }
   }, [cellDataFromProps, relationTo, isAboveViewport, getRelationships])
-
-  // Reset when data changes
-  useEffect(() => {
-    hasRequestedRef.current = false
-  }, [cellDataFromProps])
 
   // Get current selection IDs for the drawer
   const initialSelections = useMemo(() => {

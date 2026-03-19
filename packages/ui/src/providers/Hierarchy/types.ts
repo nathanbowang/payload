@@ -35,8 +35,6 @@ export type HierarchyHydrateData = {
   /** Field name for collection-specific restrictions (e.g., 'hierarchyType') */
   typeFieldName?: string
   useAsTitle?: string
-  /** When set, updates the viewCollectionSlug in context (used by list view to indicate current collection) */
-  viewCollectionSlug?: string
 }
 
 export type HierarchyContextValue = {
@@ -73,8 +71,6 @@ export type HierarchyContextValue = {
   /** Field name for collection-specific restrictions (e.g., 'hierarchyType') */
   typeFieldName: null | string
   useAsTitle: null | string
-  /** The collection slug of the currently viewed list (set by list view, used by sidebar tabs) */
-  viewCollectionSlug: null | string
 }
 
 export type HierarchyProviderProps = {
@@ -97,6 +93,4 @@ export type HydrateHierarchyProviderProps = {
   /** Field name for collection-specific restrictions (e.g., 'hierarchyType') */
   typeFieldName?: string
   useAsTitle?: string
-  /** When set, updates the viewCollectionSlug in context (used by list view to indicate current collection) */
-  viewCollectionSlug?: string
 }

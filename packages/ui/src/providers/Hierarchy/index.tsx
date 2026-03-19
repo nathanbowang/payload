@@ -34,7 +34,6 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
 
   const [baseFilter, setBaseFilter] = useState<null | Where>(null)
   const [collectionSlug, setCollectionSlug] = useState<null | string>(null)
-  const [viewCollectionSlug, setViewCollectionSlug] = useState<null | string>(null)
   const [parent, setParent] = useState<null | (Record<string, unknown> & TypeWithID)>(null)
   const [parentFieldName, setParentFieldName] = useState<string>('')
   const [treeLimit, setTreeLimit] = useState<number>(DEFAULT_HIERARCHY_TREE_LIMIT)
@@ -88,17 +87,12 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
       treeLimit: newTreeLimit,
       typeFieldName: newTypeFieldName,
       useAsTitle: newUseAsTitle,
-      viewCollectionSlug: newViewCollectionSlug,
     } = data
 
     setCollectionSlug(slug)
 
     if (newBaseFilter !== undefined) {
       setBaseFilter(newBaseFilter ?? null)
-    }
-
-    if (newViewCollectionSlug) {
-      setViewCollectionSlug(newViewCollectionSlug)
     }
 
     if (newAllowedCollections) {
@@ -367,7 +361,6 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
   const reset = useCallback(() => {
     setBaseFilter(null)
     setCollectionSlug(null)
-    setViewCollectionSlug(null)
     setParent(null)
     setParentFieldName('')
     setTreeLimit(DEFAULT_HIERARCHY_TREE_LIMIT)
@@ -428,7 +421,6 @@ export const HierarchyProvider: React.FC<HierarchyProviderProps> = ({ children }
     treeRefreshKeys,
     typeFieldName,
     useAsTitle,
-    viewCollectionSlug,
   }
 
   return <HierarchyContext value={value}>{children}</HierarchyContext>

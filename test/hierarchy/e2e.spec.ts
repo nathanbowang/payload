@@ -16,6 +16,33 @@ import { TEST_TIMEOUT_LONG } from '../playwright.config.js'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+/**
+ * Safely set a hierarchy filter checkbox to checked or unchecked state.
+ * Opens the filter dropdown, checks current state, only toggles if needed, then closes.
+ */
+async function setHierarchyFilter({
+  checked,
+  filterName,
+  page,
+  sidebar,
+}: {
+  checked: boolean
+  filterName: string
+  page: Page
+  sidebar: ReturnType<Page['locator']>
+}): Promise<void> {
+  await sidebar.locator('.hierarchy-search-input__filter').click()
+  const checkbox = page.getByRole('checkbox', { name: filterName })
+  await expect(checkbox).toBeVisible()
+
+  const isCurrentlyChecked = await checkbox.isChecked()
+  if (isCurrentlyChecked !== checked) {
+    await checkbox.click()
+  }
+
+  await page.keyboard.press('Escape')
+}
+
 let payload: PayloadTestSDK<Config>
 let serverURL: string
 
@@ -293,8 +320,9 @@ test.describe('Hierarchy Sidebar', () => {
       // Tree should be hidden during search
       await expect(page.getByRole('tree')).toBeHidden()
 
-      // Search results should appear with matching item as a clickable button
-      const resultButton = page.getByRole('button', { name: /Engineering Division/ })
+      // Search results should appear with matching item as a clickable button in sidebar
+      const sidebar = page.getByRole('tabpanel')
+      const resultButton = sidebar.getByRole('button', { name: /Engineering Division/ })
       await expect(resultButton).toBeVisible()
     })
 
@@ -379,21 +407,13 @@ test.describe('Hierarchy Sidebar', () => {
       // Initially should see all folders
       await expect(tree.getByText('General')).toBeVisible()
       await expect(tree.getByText('Orgs Only')).toBeVisible()
-      await expect(tree.getByText('Products Only')).toBeVisible()
+      await expect(tree.getByText('Products Only', { exact: true })).toBeVisible()
 
       // Open filter and select Organizations
-      await sidebar.locator('.hierarchy-search-input__filter').click()
-
-      // Wait for checkbox to be visible before clicking
-      const orgCheckbox = page.getByRole('checkbox', { name: 'Organizations' })
-      await expect(orgCheckbox).toBeVisible()
-      await orgCheckbox.click()
-
-      // Close popup by pressing Escape
-      await page.keyboard.press('Escape')
+      await setHierarchyFilter({ checked: true, filterName: 'Organizations', page, sidebar })
 
       // Wait for Products Only to be hidden (filter applied)
-      await expect(tree.getByText('Products Only')).toBeHidden()
+      await expect(tree.getByText('Products Only', { exact: true })).toBeHidden()
 
       // Should show folders that accept Organizations
       await expect(tree.getByText('Orgs Only')).toBeVisible()
@@ -410,26 +430,22 @@ test.describe('Hierarchy Sidebar', () => {
       const tree = page.getByRole('tree')
 
       // Apply a filter first
-      await sidebar.locator('.hierarchy-search-input__filter').click()
-      await page.getByRole('checkbox', { name: 'Products' }).click()
-      await page.keyboard.press('Escape')
+      await setHierarchyFilter({ checked: true, filterName: 'Products', page, sidebar })
 
       // Verify filter is applied
       await expect(tree.getByText('Orgs Only')).toBeHidden()
 
       // Clear filter by deselecting
-      await sidebar.locator('.hierarchy-search-input__filter').click()
-      await page.getByRole('checkbox', { name: 'Products' }).click()
-      await page.keyboard.press('Escape')
+      await setHierarchyFilter({ checked: false, filterName: 'Products', page, sidebar })
 
       // All folders should be visible again
       await expect(tree.getByText('General')).toBeVisible()
       await expect(tree.getByText('Orgs Only')).toBeVisible()
-      await expect(tree.getByText('Products Only')).toBeVisible()
+      await expect(tree.getByText('Products Only', { exact: true })).toBeVisible()
     })
 
     test('should show newly created folder in filtered tree when it matches filter', async () => {
-      await page.goto(foldersURL.list)
+      await page.goto(foldersURL.hierarchy)
       await openNav(page)
 
       await page.getByRole('tab', { name: 'Folders' }).click()
@@ -439,18 +455,14 @@ test.describe('Hierarchy Sidebar', () => {
       await expect(tree).toBeVisible()
 
       // Verify all folders are visible (preferences cleared in beforeEach)
-      await expect(tree.getByText('Products Only')).toBeVisible()
+      await expect(tree.getByText('Products Only', { exact: true })).toBeVisible()
       await expect(tree.getByText('Orgs Only')).toBeVisible()
 
       // Apply Organizations filter
-      await sidebar.locator('.hierarchy-search-input__filter').click()
-      const orgCheckbox = page.getByRole('checkbox', { name: 'Organizations' })
-      await expect(orgCheckbox).toBeVisible()
-      await orgCheckbox.click()
-      await page.keyboard.press('Escape')
+      await setHierarchyFilter({ checked: true, filterName: 'Organizations', page, sidebar })
 
       // Wait for filter to apply - Products Only should be hidden
-      await expect(tree.getByText('Products Only')).toBeHidden()
+      await expect(tree.getByText('Products Only', { exact: true })).toBeHidden()
 
       // Create a new folder via the Create New button in the list header
       const uniqueSuffix = Date.now()
@@ -461,7 +473,7 @@ test.describe('Hierarchy Sidebar', () => {
       await listHeader.getByRole('button', { name: 'Create New' }).first().click()
 
       // Select "Folder" from the popup menu
-      await page.getByRole('button', { name: 'Folder' }).click()
+      await page.getByRole('button', { name: 'Folder', exact: true }).click()
 
       // Wait for drawer to open
       const drawer = page.locator('.drawer__content')
@@ -497,7 +509,7 @@ test.describe('Hierarchy Sidebar', () => {
 
     test('should not show newly created folder in filtered tree when it does not match filter', async () => {
       // Full page reload to ensure clean state after preference clear
-      await page.goto(foldersURL.list)
+      await page.goto(foldersURL.hierarchy)
       await page.reload()
       await openNav(page)
 
@@ -508,17 +520,13 @@ test.describe('Hierarchy Sidebar', () => {
       await expect(tree).toBeVisible()
 
       // Verify all folders are visible (preferences cleared in beforeEach)
-      await expect(tree.getByText('Products Only')).toBeVisible()
+      await expect(tree.getByText('Products Only', { exact: true })).toBeVisible()
 
       // Apply Organizations filter
-      await sidebar.locator('.hierarchy-search-input__filter').click()
-      const orgCheckbox = page.getByRole('checkbox', { name: 'Organizations' })
-      await expect(orgCheckbox).toBeVisible()
-      await orgCheckbox.click()
-      await page.keyboard.press('Escape')
+      await setHierarchyFilter({ checked: true, filterName: 'Organizations', page, sidebar })
 
       // Wait for filter to apply
-      await expect(tree.getByText('Products Only')).toBeHidden()
+      await expect(tree.getByText('Products Only', { exact: true })).toBeHidden()
 
       // Create a new folder with Products only (does NOT match Organizations filter)
       const uniqueSuffix = Date.now()
@@ -526,7 +534,7 @@ test.describe('Hierarchy Sidebar', () => {
 
       const listHeader = page.locator('.hierarchy-list-header')
       await listHeader.getByRole('button', { name: 'Create New' }).first().click()
-      await page.getByRole('button', { name: 'Folder' }).click()
+      await page.getByRole('button', { name: 'Folder', exact: true }).click()
 
       const drawer = page.locator('.drawer__content')
       await expect(drawer).toBeVisible()
@@ -545,9 +553,7 @@ test.describe('Hierarchy Sidebar', () => {
       await expect(tree.getByText(newFolderName)).toBeHidden({ timeout: 5000 })
 
       // Clear the filter
-      await sidebar.locator('.hierarchy-search-input__filter').click()
-      await page.getByRole('checkbox', { name: 'Organizations' }).click()
-      await page.keyboard.press('Escape')
+      await setHierarchyFilter({ checked: false, filterName: 'Organizations', page, sidebar })
 
       // Now the folder should be visible
       await expect(tree.getByText(newFolderName)).toBeVisible()

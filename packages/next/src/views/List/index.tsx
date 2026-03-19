@@ -491,6 +491,7 @@ export const renderListView = async (
     Component: ComponentOverride ?? collectionConfig?.admin?.components?.views?.list?.Component,
     Fallback: viewType === 'hierarchy' ? HierarchyListView : DefaultListView,
     importMap: payload.importMap,
+    key: `list-view-${collectionSlug}-${viewType}`,
     serverProps,
   })
 
@@ -524,7 +525,6 @@ export const renderListView = async (
                   ? collectionConfig.hierarchy.collectionSpecific.fieldName
                   : undefined
               }
-              viewCollectionSlug={collectionSlug}
             />
             {RenderedListViewComponent}
           </Fragment>

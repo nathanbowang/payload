@@ -21,8 +21,18 @@ type TreeFocusContextType = {
 const TreeFocusContext = createContext<TreeFocusContextType | undefined>(undefined)
 
 export const TreeFocusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [focusedId, setFocusedId] = useState<null | string>(null)
+  const [focusedId, setFocusedIdState] = useState<null | string>(null)
   const itemsRef = useRef<Map<string, FocusableItem>>(new Map())
+
+  const setFocusedId = useCallback((id: null | string) => {
+    setFocusedIdState(id)
+    if (id) {
+      const item = itemsRef.current.get(id)
+      if (item?.ref.current && document.activeElement !== item.ref.current) {
+        item.ref.current.focus()
+      }
+    }
+  }, [])
 
   const registerItem = useCallback((item: FocusableItem) => {
     itemsRef.current.set(item.id, item)
@@ -74,7 +84,7 @@ export const TreeFocusProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setFocusedId(nextItem.id)
       }
     },
-    [focusedId],
+    [focusedId, setFocusedId],
   )
 
   return (

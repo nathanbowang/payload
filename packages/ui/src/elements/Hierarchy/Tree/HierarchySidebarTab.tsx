@@ -57,11 +57,7 @@ export const HierarchySidebarTab: React.FC<
   const [selectedFilters, setSelectedFiltersLocal] = useState<string[]>(
     initialSelectedFilters ?? [],
   )
-  const {
-    setSelectedFilters: setSelectedFiltersContext,
-    treeRefreshKeys,
-    viewCollectionSlug,
-  } = useHierarchy()
+  const { setSelectedFilters: setSelectedFiltersContext, treeRefreshKeys } = useHierarchy()
   const sidebarTabs = useSidebarTabs()
 
   // When refreshTree(slug) is called from the list view (e.g. after mutations), reload this tab.
@@ -76,10 +72,10 @@ export const HierarchySidebarTab: React.FC<
     }
   }, [treeRefreshKey, sidebarTabs, tabSlug])
 
-  // Only show selection if the current list view matches this tab's hierarchy collection
+  // Only highlight selected node when this tab is active
   const parentParam = searchParams.get('parent')
-  const isViewingThisCollection = viewCollectionSlug === hierarchyCollectionSlug
-  const selectedNodeId = isViewingThisCollection
+  const isActiveTab = sidebarTabs?.activeTabSlug === tabSlug
+  const selectedNodeId = isActiveTab
     ? (parentParam ?? selectedNodeIdFromServer ?? undefined)
     : undefined
 
@@ -97,7 +93,7 @@ export const HierarchySidebarTab: React.FC<
     ({ id }: { id: number | string }) => {
       const url = formatAdminURL({
         adminRoute,
-        path: `/collections/${hierarchyCollectionSlug}?parent=${id}`,
+        path: `/collections/${hierarchyCollectionSlug}/hierarchy?parent=${id}`,
       })
       startRouteTransition(() => {
         router.push(url)
