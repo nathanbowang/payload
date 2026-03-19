@@ -190,7 +190,7 @@ describe('Live Preview', () => {
     await navigateToDoc(page, pagesURLUtil)
 
     const toggler = page.locator('button#live-preview-toggler')
-    const iframe = page.locator('iframe.live-preview-iframe')
+    const { iframe } = await getLivePreviewIframe(page)
 
     await expect(toggler).toBeVisible()
     await expect(toggler).not.toHaveClass(/live-preview-toggler--active/)
