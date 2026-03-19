@@ -1,19 +1,17 @@
 import { withPayload } from '@payloadcms/next/withPayload'
+import type { NextConfig } from 'next'
 import path from 'path'
-
 import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
-
-import redirects from './redirects.js'
+import { redirects } from './redirects.js'
 
 const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : undefined || process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
+  : process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   images: {
     qualities: [100],
     remotePatterns: [
@@ -22,7 +20,7 @@ const nextConfig = {
 
         return {
           hostname: url.hostname,
-          protocol: url.protocol.replace(':', ''),
+          protocol: url.protocol.replace(':', '') as 'http' | 'https',
         }
       }),
     ],
