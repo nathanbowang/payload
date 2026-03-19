@@ -10,7 +10,7 @@ export type ShimmerEffectProps = {
   readonly disableInlineStyles?: boolean
   readonly height?: number | string
   readonly width?: number | string
-}
+} & React.HTMLAttributes<HTMLDivElement>
 
 export const ShimmerEffect: React.FC<ShimmerEffectProps> = ({
   animationDelay = '0ms',
@@ -18,11 +18,14 @@ export const ShimmerEffect: React.FC<ShimmerEffectProps> = ({
   disableInlineStyles = false,
   height = '60px',
   width = '100%',
+  ...rest
 }) => {
   return (
     <div
+      {...rest}
       className={['shimmer-effect', className].filter(Boolean).join(' ')}
       style={{
+        ...(rest?.style || {}),
         height: !disableInlineStyles && (typeof height === 'number' ? `${height}px` : height),
         width: !disableInlineStyles && (typeof width === 'number' ? `${width}px` : width),
       }}
