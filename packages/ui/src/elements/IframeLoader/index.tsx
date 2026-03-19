@@ -18,7 +18,12 @@ const baseClass = 'iframe-loader'
  * 1. Only show if the load takes longer than x ms.
  * 2. Once shown, force it to be visible for at least x ms to avoid flickering, even if the iframe loads before then.
  */
-export const IframeLoader: React.FC<IframeLoaderProps> = ({ src, title, ...rest }) => {
+export const IframeLoader: React.FC<IframeLoaderProps> = ({
+  onLoad: onLoadFromProps,
+  src,
+  title,
+  ...rest
+}) => {
   const [isLoading, setIsLoading] = useState(Boolean(src))
   const [showShimmer, setShowShimmer] = useState(false)
   const shimmerShownAtRef = useRef(0)
@@ -69,36 +74,44 @@ export const IframeLoader: React.FC<IframeLoaderProps> = ({ src, title, ...rest 
     }
   }, [clearTimers])
 
-  const onLoad = useCallback(() => {
-    setIsLoading(false)
+  const onLoad = useCallback<React.IframeHTMLAttributes<HTMLIFrameElement>['onLoad']>(
+    (e) => {
+      if (typeof onLoadFromProps === 'function') {
+        onLoadFromProps(e)
+      }
 
-    if (showTimerRef.current) {
-      clearTimeout(showTimerRef.current)
-      showTimerRef.current = null
-    }
+      setIsLoading(false)
 
-    if (!showShimmer) {
-      return
-    }
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current)
+        showTimerRef.current = null
+      }
 
-    const elapsed = Date.now() - shimmerShownAtRef.current
-    const remainingVisible = Math.max(0, shimmerDelays.minVisible - elapsed)
+      if (!showShimmer) {
+        return
+      }
 
-    if (remainingVisible === 0) {
-      setShowShimmer(false)
-      return
-    }
+      const elapsed = Date.now() - shimmerShownAtRef.current
+      const remainingVisible = Math.max(0, shimmerDelays.minVisible - elapsed)
 
-    hideTimerRef.current = setTimeout(() => {
-      setShowShimmer(false)
-      hideTimerRef.current = null
-    }, remainingVisible)
-  }, [showShimmer])
+      if (remainingVisible === 0) {
+        setShowShimmer(false)
+        return
+      }
+
+      hideTimerRef.current = setTimeout(() => {
+        setShowShimmer(false)
+        hideTimerRef.current = null
+      }, remainingVisible)
+    },
+    [showShimmer, onLoadFromProps],
+  )
 
   return (
     <div className={`${baseClass}__container`}>
       {showShimmer && <ShimmerEffect aria-live="polite" height="100%" role="status" />}
       <iframe
+        {...rest}
         className={[`${baseClass}__iframe`, isLoading && `${baseClass}__iframe--is-loading`]
           .filter(Boolean)
           .join(' ')}
@@ -107,7 +120,6 @@ export const IframeLoader: React.FC<IframeLoaderProps> = ({ src, title, ...rest 
         sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"
         src={src}
         title={title}
-        {...rest}
       />
     </div>
   )
