@@ -142,6 +142,7 @@ export const LivePreviewWindow: React.FC<EditViewProps> = (props) => {
                 onLoad={() => {
                   setLoadedURL(url)
                 }}
+                ref={iframeRef}
                 src={url}
                 style={{
                   transform: typeof zoom === 'number' ? `scale(${zoom}) ` : undefined,
