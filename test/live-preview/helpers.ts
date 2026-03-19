@@ -45,10 +45,14 @@ export const goToGlobalLivePreview = async (
 export const ensureDeviceIsCentered = async (page: Page) => {
   const main = page.locator('.live-preview-window__main')
 
-  const iframe = getLivePreviewIframe(page)
+  const { iframe } = await getLivePreviewIframe(page)
 
   const mainBoxAfterZoom = await main.boundingBox()
   const iframeBoxAfterZoom = await iframe.boundingBox()
+
+  if (!mainBoxAfterZoom || !iframeBoxAfterZoom) {
+    throw new Error('Could not get bounding boxes for main or iframe')
+  }
 
   const distanceFromIframeLeftToMainLeftAfterZoom = Math.abs(
     mainBoxAfterZoom?.x - iframeBoxAfterZoom?.x,
@@ -71,10 +75,14 @@ export const ensureDeviceIsCentered = async (page: Page) => {
 export const ensureDeviceIsLeftAligned = async (page: Page) => {
   const main = page.locator('.live-preview-window__main > div')
 
-  const iframe = getLivePreviewIframe(page)
+  const { iframe } = await getLivePreviewIframe(page)
 
   const mainBoxAfterZoom = await main.boundingBox()
   const iframeBoxAfterZoom = await iframe.boundingBox()
+
+  if (!mainBoxAfterZoom || !iframeBoxAfterZoom) {
+    throw new Error('Could not get bounding boxes for main or iframe')
+  }
 
   const distanceFromIframeLeftToMainLeftAfterZoom = Math.abs(
     mainBoxAfterZoom?.x - iframeBoxAfterZoom?.x,
