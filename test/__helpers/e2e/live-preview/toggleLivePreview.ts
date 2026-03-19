@@ -1,6 +1,14 @@
-import type { Page } from '@playwright/test'
+import type { FrameLocator, Page } from '@playwright/test'
 
 import { expect } from '@playwright/test'
+
+export const getLivePreviewIframe = (page: Page) => page.locator('#live-preview-iframe')
+
+export const getLivePreviewIframeFrame = (page: Page): FrameLocator => {
+  const iframe = getLivePreviewIframe(page)
+  const frame = iframe.frameLocator('iframe').first()
+  return frame
+}
 
 export const toggleLivePreview = async (
   page: Page,
@@ -18,12 +26,12 @@ export const toggleLivePreview = async (
   if (isActive && (options?.targetState === 'off' || !options?.targetState)) {
     await toggler.click()
     await expect(toggler).not.toHaveClass(/live-preview-toggler--active/)
-    await expect(page.locator('iframe.live-preview-iframe')).toBeHidden()
+    await expect(getLivePreviewIframe(page)).toBeHidden()
   }
 
   if (!isActive && (options?.targetState === 'on' || !options?.targetState)) {
     await toggler.click()
     await expect(toggler).toHaveClass(/live-preview-toggler--active/)
-    await expect(page.locator('iframe.live-preview-iframe')).toBeVisible()
+    await expect(getLivePreviewIframe(page)).toBeVisible()
   }
 }

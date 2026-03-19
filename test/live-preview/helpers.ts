@@ -2,9 +2,12 @@ import type { Page } from '@playwright/test'
 
 import { expect } from '@playwright/test'
 
-import { AdminUrlUtil } from '../__helpers/shared/adminUrlUtil.js'
-import { toggleLivePreview } from '../__helpers/e2e/live-preview/toggleLivePreview.js'
+import {
+  getLivePreviewIframe,
+  toggleLivePreview,
+} from '../__helpers/e2e/live-preview/toggleLivePreview.js'
 import { navigateToDoc, navigateToTrashedDoc } from '../__helpers/e2e/navigateToDoc.js'
+import { AdminUrlUtil } from '../__helpers/shared/adminUrlUtil.js'
 import { POLL_TOPASS_TIMEOUT } from '../playwright.config.js'
 
 export const goToCollectionLivePreview = async (
@@ -41,9 +44,12 @@ export const goToGlobalLivePreview = async (
 
 export const ensureDeviceIsCentered = async (page: Page) => {
   const main = page.locator('.live-preview-window__main')
-  const iframe = page.locator('iframe.live-preview-iframe')
+
+  const iframe = getLivePreviewIframe(page)
+
   const mainBoxAfterZoom = await main.boundingBox()
   const iframeBoxAfterZoom = await iframe.boundingBox()
+
   const distanceFromIframeLeftToMainLeftAfterZoom = Math.abs(
     mainBoxAfterZoom?.x - iframeBoxAfterZoom?.x,
   )
@@ -64,12 +70,16 @@ export const ensureDeviceIsCentered = async (page: Page) => {
 
 export const ensureDeviceIsLeftAligned = async (page: Page) => {
   const main = page.locator('.live-preview-window__main > div')
-  const iframe = page.locator('iframe.live-preview-iframe')
+
+  const iframe = getLivePreviewIframe(page)
+
   const mainBoxAfterZoom = await main.boundingBox()
   const iframeBoxAfterZoom = await iframe.boundingBox()
+
   const distanceFromIframeLeftToMainLeftAfterZoom = Math.abs(
     mainBoxAfterZoom?.x - iframeBoxAfterZoom?.x,
   )
+
   await expect(() => expect(distanceFromIframeLeftToMainLeftAfterZoom).toBe(0)).toPass({
     timeout: POLL_TOPASS_TIMEOUT,
   })

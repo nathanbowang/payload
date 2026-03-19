@@ -136,6 +136,7 @@ export const LivePreviewWindow: React.FC<EditViewProps> = (props) => {
         <div className={`${baseClass}__main`}>
           <DeviceContainer>
             <IframeLoader
+              id="live-preview-iframe"
               onLoad={() => {
                 setLoadedURL(url)
               }}
