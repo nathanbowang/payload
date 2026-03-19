@@ -109,7 +109,7 @@ export const IframeLoader: React.FC<IframeLoaderProps> = ({
 
   return (
     <div className={`${baseClass}__container`}>
-      {showShimmer && <ShimmerEffect aria-live="polite" height="100%" role="status" />}
+      {showShimmer && <ShimmerEffect aria-live="polite" height="100%" role="status" transparent />}
       <iframe
         {...rest}
         className={[`${baseClass}__iframe`, isLoading && `${baseClass}__iframe--is-loading`]
