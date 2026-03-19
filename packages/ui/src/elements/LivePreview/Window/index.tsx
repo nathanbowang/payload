@@ -27,6 +27,7 @@ export const LivePreviewWindow: React.FC<EditViewProps> = (props) => {
     popupRef,
     previewWindowType,
     setLoadedURL,
+    shouldRenderIframe,
     url,
     zoom,
   } = useLivePreviewContext()
@@ -135,16 +136,18 @@ export const LivePreviewWindow: React.FC<EditViewProps> = (props) => {
         <LivePreviewToolbar {...props} />
         <div className={`${baseClass}__main`}>
           <DeviceContainer>
-            <IframeLoader
-              id="live-preview-iframe"
-              onLoad={() => {
-                setLoadedURL(url)
-              }}
-              src={url}
-              style={{
-                transform: typeof zoom === 'number' ? `scale(${zoom}) ` : undefined,
-              }}
-            />
+            {shouldRenderIframe && (
+              <IframeLoader
+                id="live-preview-iframe"
+                onLoad={() => {
+                  setLoadedURL(url)
+                }}
+                src={url}
+                style={{
+                  transform: typeof zoom === 'number' ? `scale(${zoom}) ` : undefined,
+                }}
+              />
+            )}
           </DeviceContainer>
         </div>
       </div>

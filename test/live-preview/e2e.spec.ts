@@ -180,6 +180,39 @@ describe('Live Preview', () => {
     await expect(iframe).toBeHidden()
   })
 
+  test('collection — defers iframe render until toggled and keeps it mounted after toggling off', async () => {
+    await deletePreferences({
+      payload,
+      user,
+      key: `collection-${pagesSlug}`,
+    })
+
+    await navigateToDoc(page, pagesURLUtil)
+
+    const toggler = page.locator('button#live-preview-toggler')
+    const iframe = page.locator('iframe.live-preview-iframe')
+
+    await expect(toggler).toBeVisible()
+    await expect(toggler).not.toHaveClass(/live-preview-toggler--active/)
+    await expect(iframe).toHaveCount(0)
+
+    await toggleLivePreview(page, {
+      targetState: 'on',
+    })
+
+    await expect(toggler).toHaveClass(/live-preview-toggler--active/)
+    await expect(iframe).toHaveCount(1)
+    await expect(iframe).toBeVisible()
+
+    await toggleLivePreview(page, {
+      targetState: 'off',
+    })
+
+    await expect(toggler).not.toHaveClass(/live-preview-toggler--active/)
+    await expect(iframe).toHaveCount(1)
+    await expect(iframe).toBeHidden()
+  })
+
   test('collection — renders iframe', async () => {
     await goToCollectionLivePreview(page, pagesURLUtil)
     const { iframe } = await getLivePreviewIframe(page)
