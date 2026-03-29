@@ -13,13 +13,25 @@ export const WorkflowItemsCollection: CollectionConfig = {
       type: 'text',
     },
     {
+      type: 'group',
+      name: 'group',
+      fields: [
+        {
+          name: 'groupFlag',
+          type: 'checkbox',
+          required: true,
+          defaultValue: false,
+        },
+      ],
+    },
+    {
       type: 'tabs',
       tabs: [
         {
-          name: 'workflowTab',
+          name: 'tab',
           fields: [
             {
-              name: 'flag',
+              name: 'tabFlag',
               type: 'checkbox',
               required: true,
               defaultValue: false,
